@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Box Model</title>
+
+</head>
+<body>
+    <div class="productDetailContainer">
+        <div class="row section1">
+            <div class="row" style="margin-top:10rem" id="cube-form">
+                <form action="#" method="POST" onsubmit="return false;">
+                    <!-- Dimension inputs -->
+                    <label for="width">Width:</label>
+                    <input type="number" name="width" id="width">
+                    <label for="height">Height:</label>
+                    <input type="number" name="height" id="height">
+                    <label for="depth">Depth:</label>
+                    <input type="number" name="depth" id="depth">
+                    <!-- Add inputs for height and depth -->
+                    <br>
+                    <!-- Color selection -->
+                    <label for="color">Color:</label>
+                    <input type="color" name="color" id="color">
+    
+                    <button type="button" id="saveButton">Save</button>
+                </form>
+    
+    
+                <div id="cube-container" style="width: 100%; height: 100vh;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.130.0/three.min.js" onerror="loadFallbackThreeJS()">
+    </script>
+    <script src="./box.js"></script>
+</body>
+</html>
+
+
+
