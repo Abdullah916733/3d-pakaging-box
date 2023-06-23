@@ -51,19 +51,22 @@ function initializeScene() {
     const button2 = document.getElementById('myButton2');
     const button3 = document.getElementById('myButton3');
 
-      selectElement.addEventListener('change', function() {
-    const selectedOption = selectElement.selectedIndex;
-    
-    if (selectedOption === 1) {
-      button1.click();
-    } else if (selectedOption === 2) {
-      button2.click();
-    } else if (selectedOption === 3) {
-      button3.click();
-    } else if (selectedOption === 4) {
-      customChoiceButton.click();
-    }
-  });
+    selectElement.addEventListener('change', function () {
+        const selectedOption = selectElement.selectedIndex;
+
+        if (selectedOption === 1) {
+            button1.click();
+        } else if (selectedOption === 2) {
+            button2.click();
+        } else if (selectedOption === 3) {
+            button3.click();
+        } else if (selectedOption === 4) {
+            customChoiceButton.click();
+        }
+    });
+
+
+
     button1.addEventListener('click', () => {
         // Display the dimensions
 
@@ -165,6 +168,47 @@ function initializeScene() {
         updateCube(widthValue, heightValue, depthValue);
     });
 
+    const faceButtons = document.querySelectorAll('.face-button');
+
+    faceButtons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const face = event.target.dataset.face;
+
+            // Remove active class from all buttons
+            faceButtons.forEach((btn) => btn.classList.remove('active'));
+
+            // Add active class to the selected button
+            button.classList.add('active');
+
+            // Rotate the cube to bring the selected face to the front
+            const rotation = getRotationByFace(face);
+            cube.rotation.x = rotation.x;
+            cube.rotation.y = rotation.y;
+        });
+    });
+
+    // Define rotation values for each face
+    function getRotationByFace(face) {
+        switch (face) {
+          case 'top':
+            return { x: Math.PI / 9, y: Math.PI / 4 };
+          case 'bottom':
+            return { x: Math.PI / 6, y: Math.PI / 4};
+          case 'front':
+            return { x: Math.PI / 6, y: Math.PI / 4 };
+          case 'back':
+            return { x: Math.PI / 6, y: Math.PI / 4 };
+          case 'left':
+            return { x: Math.PI / 6, y: Math.PI / 4 };
+          case 'right':
+            return { x: Math.PI / 6, y: Math.PI / 4 };
+          default:
+            return { x: Math.PI / 6, y: Math.PI / 4 };
+        }
+      }
+      
+
+
 
     // Create a cube geometry with default values
     const cubeGeometry = new THREE.BoxGeometry(Number(widthInput.value), Number(heightInput.value), Number(depthInput.value));
@@ -221,7 +265,7 @@ function initializeScene() {
         cube.geometry = newCubeGeometry;
         cube.material.color.set(colorInput.value);
 
-        
+
     }
 
     // Rotate the cube on mouse click and drag
@@ -245,16 +289,16 @@ function initializeScene() {
                 x: event.clientX - previousMousePosition.x,
                 y: event.clientY - previousMousePosition.y
             };
-    
+
             // Restrict rotation to top and bottom faces
             const rotationSpeed = 0.01; // Adjust this value to control the rotation speed
             cube.rotation.x += mouseDelta.y * rotationSpeed;
             cube.rotation.x = Math.max(Math.min(cube.rotation.x, Math.PI / 2), -Math.PI / 2); // Restrict rotation to -90 to 90 degrees
-    
+
             // Restrict rotation to less than 360 degrees
             cube.rotation.y += mouseDelta.x * rotationSpeed;
             cube.rotation.y = cube.rotation.y % (Math.PI * 2); // Keep rotation within 0 to 2*pi range
-    
+
             previousMousePosition = {
                 x: event.clientX,
                 y: event.clientY

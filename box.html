@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,33 +10,34 @@
     <title>3D Box Model</title>
 
 </head>
+
 <body>
     <div class="productDetailContainer">
         <div class="row section1">
-          
+
             <div class="row" style="margin-top:10rem" id="cube-form">
-                <select class="form-select">
+                <select class="form-select common-select2">
                     <option>
-                      <button type="button"  class="btn btn-primary">Select size </button>
+                        <button type="button" class="btn btn-primary">Select size </button>
                     </option>
                     <option>
-                      <button type="button"  class="btn btn-primary">2.5 x 2.5 x 1.5</button>
+                        <button type="button" class="btn btn-primary">2.5 x 2.5 x 1.5</button>
                     </option>
                     <option>
-                      <button type="button"  class="btn btn-primary">3.25 x 3.25 x 1.25</button>
+                        <button type="button" class="btn btn-primary">3.25 x 3.25 x 1.25</button>
                     </option>
                     <option>
-                      <button type="button"  class="btn btn-primary">4 x 4 x 1.5</button>
+                        <button type="button" class="btn btn-primary">4 x 4 x 1.5</button>
                     </option>
                     <option>
-                      <button type="button"  class="btn btn-primary">Choose custom</button>
+                        <button type="button" class="btn btn-primary">Choose custom</button>
                     </option>
-                  </select>
+                </select>
                 <button id="myButton" class="button-hide">2.5 x 2.5 x 1.5</button>
                 <button id="myButton2" class="button-hide">3.25 x 3.25 x 1.25</button>
                 <button id="myButton3" class="button-hide">4 x 4 x 1.5</button>
 
-                <button id="custom-choice"> Choose custom style</button>
+                <button id="custom-choice" class="button-hide"> Choose custom style</button>
                 <form action="#" method="POST" onsubmit="return false;">
                     <!-- Dimension inputs -->
                     <label for="width">Length:</label>
@@ -48,12 +50,21 @@
                     <br>
                     <!-- Color selection -->
                     <label for="color">Color:</label>
-                    <input type="color" name="color" id="color">
-    
+
+
                     <button type="button" id="saveButton">Save</button>
                 </form>
-    
-    
+
+
+                <button id="topButton" class="face-button" data-face="top">Top</button>
+                <button id="bottomButton" class="face-button" data-face="bottom">Bottom</button>
+                <button id="frontButton" class="face-button" data-face="front">Front</button>
+                <button id="backButton" class="face-button" data-face="back">Back</button>
+                <button id="leftButton" class="face-button" data-face="left">Left</button>
+                <button id="rightButton" class="face-button" data-face="right">Right</button>
+
+
+                <input type="color" name="color" id="color">
                 <div id="cube-container" style="width: 100%; height: 100vh;"></div>
             </div>
         </div>
@@ -62,12 +73,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.130.0/build/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.130.0/three.min.js" onerror="loadFallbackThreeJS()"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.130.0/three.min.js"
+        onerror="loadFallbackThreeJS()"></script>
 
-    
+
     <script src="./box.js"></script>
 </body>
+
 </html>
-
-
-

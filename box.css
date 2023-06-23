@@ -1,3 +1,20 @@
 .button-hide{
     display: none;
 }
+.common-select2 {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 20px;
+    background-image: url("../user-images/svg/caret-down-grey.svg");
+    background-position: center right 20px;
+    background-size: 10px;
+    background-repeat: no-repeat;
+    outline: none;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    width: 15rem;
+    padding: 0.8rem 1rem; 
+    border-radius: 8px;
+}
