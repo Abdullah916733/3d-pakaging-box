@@ -16,31 +16,155 @@ function initializeScene() {
 
     container.appendChild(renderer.domElement);
 
-    const button1 = document.getElementById('myButton');
+
+
 
     // Add a click event listener to the button
+
+    let widthInput = document.getElementById('width');
+    let heightInput = document.getElementById('height');
+    let depthInput = document.getElementById('depth');
+    const colorInput = document.getElementById('color');
+    const saveButton = document.getElementById('saveButton');
+
+    // Disable all inputs initially
+    widthInput.disabled = true;
+    heightInput.disabled = true;
+    depthInput.disabled = true;
+    // colorInput.disabled = true;
+    saveButton.disabled = true;
+
+    // Add a click event listener to the "Choose custom style" button
+    const customChoiceButton = document.getElementById('custom-choice');
+    customChoiceButton.addEventListener('click', () => {
+        // Enable all inputs
+        widthInput.disabled = false;
+        heightInput.disabled = false;
+        depthInput.disabled = false;
+        colorInput.disabled = false;
+        saveButton.disabled = false;
+    });
+
+    const selectElement = document.querySelector('.form-select');
+
+    const button1 = document.getElementById('myButton');
+    const button2 = document.getElementById('myButton2');
+    const button3 = document.getElementById('myButton3');
+
+      selectElement.addEventListener('change', function() {
+    const selectedOption = selectElement.selectedIndex;
+    
+    if (selectedOption === 1) {
+      button1.click();
+    } else if (selectedOption === 2) {
+      button2.click();
+    } else if (selectedOption === 3) {
+      button3.click();
+    } else if (selectedOption === 4) {
+      customChoiceButton.click();
+    }
+  });
     button1.addEventListener('click', () => {
         // Display the dimensions
-        console.log('Height: 100');
-        console.log('Width: 100');
-        console.log('Depth: 100');
+
+        // Set button values to 100
+        widthValue = 250;
+        heightValue = 250;
+        depthValue = 150;
+
+        // Update the form inputs with button values
+        widthInput.value = widthValue;
+        heightInput.value = heightValue;
+        depthInput.value = depthValue;
+    });
+    button2.addEventListener('click', () => {
+        // Display the dimensions
+
+        // Set button values to 100
+        widthValue = 325;
+        heightValue = 325;
+        depthValue = 125;
+
+        // Update the form inputs with button values
+        widthInput.value = widthValue;
+        heightInput.value = heightValue;
+        depthInput.value = depthValue;
+    });
+    button3.addEventListener('click', () => {
+        // Display the dimensions
+
+        // Set button values to 100
+        widthValue = 400;
+        heightValue = 400;
+        depthValue = 150;
+
+        // Update the form inputs with button values
+        widthInput.value = widthValue;
+        heightInput.value = heightValue;
+        depthInput.value = depthValue;
+    });
+
+    // Update the cube's dimensions and form inputs when the save button is clicked
+    document.getElementById('saveButton').addEventListener('click', () => {
+        // Update the cube's dimensions based on the form inputs
+        widthValue = Number(widthInput.value);
+        heightValue = Number(heightInput.value);
+        depthValue = Number(depthInput.value);
+
+        // Update the form inputs with the cube dimensions
+        widthInput.value = widthValue;
+        heightInput.value = heightValue;
+        depthInput.value = depthValue;
     });
 
 
-    // Get the form inputs
-    const widthInput = document.getElementById('width');
-    const heightInput = document.getElementById('height');
-    const depthInput = document.getElementById('depth');
-    const colorInput = document.getElementById('color');
+
 
     // Set default values for the inputs
-    widthInput.value = '100';
-    heightInput.value = '100';
-    depthInput.value = '100';
+    widthInput.value = '200';
+    heightInput.value = '200';
+    depthInput.value = '200';
     colorInput.value = '#e7e7e7'; // Set the default color to black
 
     // Update the cube's dimensions and color when the form is submitted
-    document.getElementById('saveButton').addEventListener('click', updateCube);
+    document.getElementById('saveButton').addEventListener('click', () => {
+        // Update the cube's dimensions based on the form inputs
+        const widthValue = Number(widthInput.value);
+        const heightValue = Number(heightInput.value);
+        const depthValue = Number(depthInput.value);
+
+        // Update the cube with form input values
+        updateCube(widthValue, heightValue, depthValue);
+    });
+
+    document.getElementById('myButton').addEventListener('click', () => {
+        // Set button values to 100
+        const widthValue = 250;
+        const heightValue = 250;
+        const depthValue = 150;
+
+        // Update the cube with button values
+        updateCube(widthValue, heightValue, depthValue);
+    });
+    document.getElementById('myButton2').addEventListener('click', () => {
+        // Set button values to 325,325,125
+        const widthValue = 325;
+        const heightValue = 325;
+        const depthValue = 125;
+
+        // Update the cube with button values
+        updateCube(widthValue, heightValue, depthValue);
+    });
+    document.getElementById('myButton3').addEventListener('click', () => {
+        // Set button values to 325,325,125
+        const widthValue = 400;
+        const heightValue = 400;
+        const depthValue = 150;
+
+        // Update the cube with button values
+        updateCube(widthValue, heightValue, depthValue);
+    });
+
 
     // Create a cube geometry with default values
     const cubeGeometry = new THREE.BoxGeometry(Number(widthInput.value), Number(heightInput.value), Number(depthInput.value));
@@ -57,7 +181,7 @@ function initializeScene() {
     scene.add(cube); // Add cube to the scene
 
     // Set camera position and add it to the scene
-    camera.position.z = 200; // Top right and back position
+    camera.position.z = 550; // Top right and back position
     camera.lookAt(scene.position);
     scene.add(camera);
 
@@ -96,6 +220,8 @@ function initializeScene() {
         cube.geometry.dispose(); // Dispose of the old geometry
         cube.geometry = newCubeGeometry;
         cube.material.color.set(colorInput.value);
+
+        
     }
 
     // Rotate the cube on mouse click and drag
@@ -119,10 +245,16 @@ function initializeScene() {
                 x: event.clientX - previousMousePosition.x,
                 y: event.clientY - previousMousePosition.y
             };
-
-            cube.rotation.x += mouseDelta.y * 0.01;
-            cube.rotation.y += mouseDelta.x * 0.01;
-
+    
+            // Restrict rotation to top and bottom faces
+            const rotationSpeed = 0.01; // Adjust this value to control the rotation speed
+            cube.rotation.x += mouseDelta.y * rotationSpeed;
+            cube.rotation.x = Math.max(Math.min(cube.rotation.x, Math.PI / 2), -Math.PI / 2); // Restrict rotation to -90 to 90 degrees
+    
+            // Restrict rotation to less than 360 degrees
+            cube.rotation.y += mouseDelta.x * rotationSpeed;
+            cube.rotation.y = cube.rotation.y % (Math.PI * 2); // Keep rotation within 0 to 2*pi range
+    
             previousMousePosition = {
                 x: event.clientX,
                 y: event.clientY
