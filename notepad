@@ -1,0 +1,23 @@
+    renderer.shadowMap.enabled = true; // Enable shadow mapping
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Set shadow map type for smoother shadows
+
+
+
+
+
+    // Create a directional light from top right and back position
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(200, 200, 200);
+    light.castShadow = true; // Enable shadow casting for the light
+    light.shadow.mapSize.width = 2048; // Shadow map width for shadow quality
+    light.shadow.mapSize.height = 2048; // Shadow map height for shadow quality
+    scene.add(light);
+
+    // Set up shadow properties for the light
+    light.shadow.bias = -0.001; // Shadow bias to reduce self-shadowing artifacts
+    light.shadow.camera.near = 0.1; // Near plane of the light's shadow camera
+    light.shadow.camera.far = 500; // Far plane of the light's shadow camera
+    light.shadow.camera.left = -100; // Left plane of the light's shadow camera
+    light.shadow.camera.right = 100; // Right plane of the light's shadow camera
+    light.shadow.camera.top = 100; // Top plane of the light's shadow camera
+    light.shadow.camera.bottom = -100; // Bottom plane of the light's shadow camera
