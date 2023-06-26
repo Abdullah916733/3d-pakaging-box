@@ -17,10 +17,18 @@ function initializeScene() {
 
     container.appendChild(renderer.domElement);
 
+    let initialColor = '#e7e7e7'
 
-
-
+    let colorsOfFace = [
+        initialColor,
+        initialColor,
+        initialColor,
+        initialColor,
+        initialColor,
+        initialColor,
+    ]
     // Add a click event listener to the button
+
 
     let widthInput = document.getElementById('width');
     let heightInput = document.getElementById('height');
@@ -33,6 +41,15 @@ function initializeScene() {
     });
     colorInput.addEventListener('change', function () {
         const colorValue = colorInput.value;
+    
+        // Update colorsOfFace array for elements with initial color
+        colorsOfFace = colorsOfFace.map((color) =>
+            color === initialColor ? colorValue : color
+        );
+    
+        // Update initialColor value
+        initialColor = colorValue;
+    
         updateCube(colorValue);
     });
     const saveButton = document.getElementById('saveButton');
@@ -181,11 +198,37 @@ function initializeScene() {
     });
 
     const faceButtons = document.querySelectorAll('.face-button');
+    const colorPicker = document.getElementById('colorPicker');
+    const changeColorButton = document.getElementById('changeColorButton');
 
+    colorPicker.addEventListener('input', function() {
+        // Trigger the click event on the changeColorButton
+        changeColorButton.click();
+      });
+
+    changeColorButton.addEventListener('click', (event) => {
+        console.log(activeFaceIndex);
+
+        const newColor = colorPicker.value;
+
+        // Update the cube with the new material
+        colorsOfFace[activeFaceIndex] = newColor;
+
+        // Update the cube with the new material
+        updateCube();
+    });
+
+    let activeFaceIndex = 0;
+
+    const setActiveFaceIndex = (val) => {
+        activeFaceIndex = val
+        return;
+    }
     faceButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
-
             const face = event.target.dataset.face;
+            setActiveFaceIndex(event.target.dataset.index)
+            // activeFaceIndex = event.target.dataset.index;
 
             // Remove active class from all buttons
             faceButtons.forEach((btn) => btn.classList.remove('active'));
@@ -197,9 +240,12 @@ function initializeScene() {
             const rotation = getRotationByFace(face);
             cube.rotation.x = rotation.x;
             cube.rotation.y = rotation.y;
-
+            console.log(activeFaceIndex)
         });
+
+        // setActiveFaceIndex();
     });
+
 
     // Define rotation values for each face
     // Define rotation values for each face
@@ -232,23 +278,29 @@ function initializeScene() {
     // Helper function to get the target rotation values based on the selected face
     function getTargetRotation(face) {
         switch (face) {
+            case 'front':
+                console.log(face)
+                return { x: 0.1745, y: 0.3491 }; // 20 degrees in radians (Math.PI / 9)
+            case 'back':
+                console.log(face)
+                return { x: 0.1745, y: Math.PI - 0.3491 }; // -20 degrees in radians (Math.PI - Math.PI / 9)
+
             case 'top':
                 const rotationTY = THREE.MathUtils.degToRad(30);
                 const rotationTX = THREE.MathUtils.degToRad(-30);
                 console.log(face)
-                return { x: Math.PI / 2 + rotationTX, y: rotationTY };
+                return { x: Math.PI / 2 + rotationTX, y: 0 };
 
             case 'bottom':
+                console.log(face)
                 const rotation = THREE.MathUtils.degToRad(30);
-                return { x: -Math.PI / 2 + rotation, y: rotation };
+                return { x: -Math.PI / 2 + rotation, y: 0 };
 
-            case 'front':
-                return { x: 0.1745, y: 0.3491 }; // 20 degrees in radians (Math.PI / 9)
-            case 'back':
-                return { x: 0.1745, y: Math.PI - 0.3491 }; // -20 degrees in radians (Math.PI - Math.PI / 9)
             case 'left':
+                console.log(face)
                 return { x: 0.1745, y: Math.PI / 9 * 4 }; // 20 degrees in radians (Math.PI / 9 * 4)
             case 'right':
+                console.log(face)
                 return { x: 0.1745, y: -Math.PI / 9 * 4 }; // -20 degrees in radians (-Math.PI / 9 * 4)
             default:
                 return { x: 0, y: 0 };
@@ -258,7 +310,10 @@ function initializeScene() {
 
 
     //   change face color 
-    // Get the color picker input element and the change color button
+
+
+
+
 
 
 
@@ -268,6 +323,9 @@ function initializeScene() {
         Number(heightInput.value),
         Number(depthInput.value)
     );
+
+
+
 
     // Create an array of materials for each face
     const faceMaterials = [
@@ -345,6 +403,11 @@ function initializeScene() {
         renderer.render(scene, camera);
     }
     render();
+
+
+
+
+
     function updateCube() {
         const newCubeGeometry = new THREE.BoxGeometry(
             Number(widthInput.value),
@@ -355,13 +418,19 @@ function initializeScene() {
         cube.geometry.dispose(); // Dispose of the old geometry
         cube.geometry = newCubeGeometry;
 
-        const newMaterial = new THREE.MeshLambertMaterial({
-            color: colorInput.value
-        });
+        console.log(colorsOfFace);
+
+        let newMaterial = [
+            new THREE.MeshLambertMaterial({ color: colorsOfFace[0] }), // Red material for the front face   0
+            new THREE.MeshLambertMaterial({ color: colorsOfFace[1] }), // Green material for the back face   1 
+            new THREE.MeshLambertMaterial({ color: colorsOfFace[2] }), // Blue material for the top face  2
+            new THREE.MeshLambertMaterial({ color: colorsOfFace[3] }), // Yellow material for the bottom face  3
+            new THREE.MeshLambertMaterial({ color: colorsOfFace[4] }), // Magenta material for the right face  4 
+            new THREE.MeshLambertMaterial({ color: colorsOfFace[5] }) // Cyan material for the left face   5
+        ]
 
         // Update the material for all faces of the cube
         cube.material = newMaterial;
-
 
         ////this is the function to animate the generated cube by rotating it a bit, everytime it is generated
         // Set the initial and target rotation values

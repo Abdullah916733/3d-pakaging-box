@@ -58,27 +58,34 @@
 
 
                 <div class="face-btn-container">
-                    <button id="topButton" class="face-button" data-face="top"><img src="./assets/top.svg" alt="">
+                    <button id="topButton" class="face-button" data-face="top" data-index="2"><img
+                            src="./assets/top.svg" alt=""> <br>
                         Top</button>
-                    <button id="bottomButton" class="face-button" data-face="bottom"><img src="./assets/bottom.svg"
-                            alt="">Bottom</button>
-                    <button id="frontButton" class="face-button" data-face="front"><img src="./assets/front.svg"
-                            alt="">Front</button>
-                    <button id="backButton" class="face-button" data-face="back"><img src="./assets/back.svg"
-                            alt="">Back</button>
-                    <button id="leftButton" class="face-button" data-face="left"><img src="./assets//left.svg"
-                            alt="">Left</button>
-                    <button id="rightButton" class="face-button" data-face="right"><img src="./assets/right.svg"
-                            alt="">Right</button>
+                    <button id="bottomButton" class="face-button" data-face="bottom" data-index="3"><img
+                            src="./assets/bottom.svg" alt=""><br>Bottom</button>
+                    <button id="frontButton" class="face-button" data-face="front" data-index="4"><img
+                            src="./assets/front.svg" alt=""><br>Front</button>
+                    <button id="backButton" class="face-button" data-face="back" data-index="5"><img
+                            src="./assets/back.svg" alt=""><br>Back</button>
+                    <button id="leftButton" class="face-button" data-face="left" data-index="1"><img
+                            src="./assets//left.svg" alt=""><br>Left</button>
+                    <button id="rightButton" class="face-button" data-face="right" data-index="0"><img
+                            src="./assets/right.svg" alt=""><br>Right</button>
 
                 </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <input type="color" name="color" id="color"><span>
+                        <p>Change Box color</p>
+                    </span>
+                    <button id="updateColorButton" class="button-hide">Update Cube</button>
 
-                <input type="color" name="color" id="color">
-                <button id="updateColorButton" class="button-hide">Update Cube</button>
-                <input type="color" id="colorPicker" value="#ffffff">
-                <button id="changeColorButton">Change Color</button>
 
+                    <input type="color" id="colorPicker" value="#ffffff"><span>
+                        <p>Change Face color</p>
+                    </span>
+                    <button id="changeColorButton" class="button-hide">Change Color</button>
 
+                </div>
                 <div id="cube-container" style="width: 100%; height: 100vh;"></div>
 
 

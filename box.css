@@ -2,7 +2,7 @@
     width: 500px;
     height: 500px;
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50% ,-50%);
 }
@@ -34,7 +34,7 @@
     flex-direction: column;
     position: absolute;
     right: 10%;
-    top: 50%;
+    top: 35%;
     /* gap: 2rem; */
     border-radius: 20px;
     padding: 0.5rem;
