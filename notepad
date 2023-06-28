@@ -21,3 +21,36 @@
     light.shadow.camera.right = 100; // Right plane of the light's shadow camera
     light.shadow.camera.top = 100; // Top plane of the light's shadow camera
     light.shadow.camera.bottom = -100; // Bottom plane of the light's shadow camera
+
+
+
+text addition
+
+ function addText() {
+        const text = document.getElementById('text-input').value; // Get the text from the input field
+
+        const loader = new THREE.FontLoader();
+        loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+            // Create a text geometry
+            const textGeometry = new THREE.TextGeometry(text, {
+                font: font,
+                size: 20,
+                height: 0,
+                curveSegments: 12,
+                bevelEnabled: false
+            });
+
+            // Create a material for the text
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0x1d1d1d });
+
+            // Create a mesh for the text
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+            // Set the position and rotation of the text mesh
+            textMesh.position.set(250, 0, 10);
+            textMesh.rotation.set(0, 0, 0);
+
+            // Add the text mesh to the scene
+            scene.add(textMesh);
+        });
+    }

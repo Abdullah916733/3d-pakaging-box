@@ -1,3 +1,4 @@
+console.log(fontsData);
 function initializeScene() {
 
 
@@ -41,16 +42,20 @@ function initializeScene() {
     });
     colorInput.addEventListener('change', function () {
         const colorValue = colorInput.value;
-    
+
         // Update colorsOfFace array for elements with initial color
         colorsOfFace = colorsOfFace.map((color) =>
             color === initialColor ? colorValue : color
         );
-    
+
         // Update initialColor value
         initialColor = colorValue;
-    
-        updateCube(colorValue);
+
+        shouldRotateCube = false;
+        updateCube();
+
+        // Reset the rotation flag
+        shouldRotateCube = true;
     });
     const saveButton = document.getElementById('saveButton');
 
@@ -197,14 +202,16 @@ function initializeScene() {
         updateCube(widthValue, heightValue, depthValue);
     });
 
+    //Handle face buttons
+
     const faceButtons = document.querySelectorAll('.face-button');
     const colorPicker = document.getElementById('colorPicker');
     const changeColorButton = document.getElementById('changeColorButton');
 
-    colorPicker.addEventListener('input', function() {
+    colorPicker.addEventListener('input', function () {
         // Trigger the click event on the changeColorButton
         changeColorButton.click();
-      });
+    });
 
     changeColorButton.addEventListener('click', (event) => {
         console.log(activeFaceIndex);
@@ -214,20 +221,29 @@ function initializeScene() {
         // Update the cube with the new material
         colorsOfFace[activeFaceIndex] = newColor;
 
-        // Update the cube with the new material
+        shouldRotateCube = false;
         updateCube();
+
+        // Reset the rotation flag
+        shouldRotateCube = true;
     });
 
-    let activeFaceIndex = 0;
 
+    let activeFaceIndex = 0;
+    let activeFace = '';
     const setActiveFaceIndex = (val) => {
         activeFaceIndex = val
+        return;
+    }
+    const setActiveFace = (valFace) => {
+        activeFace = valFace;
         return;
     }
     faceButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
             const face = event.target.dataset.face;
             setActiveFaceIndex(event.target.dataset.index)
+            setActiveFace(event.target.dataset.face)
             // activeFaceIndex = event.target.dataset.index;
 
             // Remove active class from all buttons
@@ -247,7 +263,6 @@ function initializeScene() {
     });
 
 
-    // Define rotation values for each face
     // Define rotation values for each face
     function getRotationByFace(face) {
         const duration = 1000; // Duration of the rotation animation in milliseconds
@@ -297,25 +312,92 @@ function initializeScene() {
                 return { x: -Math.PI / 2 + rotation, y: 0 };
 
             case 'left':
-                console.log(face)
-                return { x: 0.1745, y: Math.PI / 9 * 4 }; // 20 degrees in radians (Math.PI / 9 * 4)
+                return { x: 0.1745, y: Math.PI / 9 * 3 + (Math.PI / 180 * 10) }; // 20 degrees + 10 degrees in radians
             case 'right':
-                console.log(face)
-                return { x: 0.1745, y: -Math.PI / 9 * 4 }; // -20 degrees in radians (-Math.PI / 9 * 4)
+                return { x: 0.1745, y: -Math.PI / 9 * 5 - (Math.PI / 180 * 10) }; // -20 degrees - 10 degrees in radians
             default:
                 return { x: 0, y: 0 };
         }
     }
 
+    //   change face Image
+    const imageInput = document.getElementById('imageInput');
+    imageInput.addEventListener('change', handleImageUpload);
 
 
-    //   change face color 
+    function handleImageUpload(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const image = new Image();
+            image.src = e.target.result;
+
+            image.onload = function () {
+                const texture = new THREE.Texture(image);
+                texture.needsUpdate = true;
+
+                const material = new THREE.MeshLambertMaterial({ map: texture });
+                cube.material[activeFaceIndex] = material; // Set the material to the desired cube face
+            };
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    // Load the font asynchronously
+
+    // Declare the text array
+    const text = [];
+    // const activeFaceMaterial = faceMaterials[activeFaceIndex] ? faceMaterials[activeFaceIndex] : newMaterial[activeFaceIndex];
+
+    // Define a function to handle the "Add Text" button click
+    function addText() {
+        const textInput = document.getElementById('text-input').value; // Get the text from the input field
+        const fontSelector = document.getElementById('fontselector'); // Get the font selector dropdown element
+        const selectedFontUrl = fontSelector.value; // Get the selected font URL
+
+        const loader = new THREE.FontLoader();
+        loader.load(selectedFontUrl, function (font) {
+            // Create a text geometry
+            const textGeometry = new THREE.TextGeometry(textInput, {
+                font: font,
+                size: 20,
+                height: 0,
+                curveSegments: 12,
+                bevelEnabled: false
+            });
+
+            // Create a material for the text
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0x1d1d1d });
+
+            // Create a mesh for the text
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+            // Calculate the position for the text
+            const cubeWidth = Number(widthInput.value);
+            const cubeHeight = Number(heightInput.value);
+            const cubeDepth = Number(depthInput.value);
+            const rightFacePosition = cubeWidth / 2;
+            const rightFaceHeight = cubeHeight;
+
+            // Set the position of the text mesh
+            textMesh.position.set(rightFacePosition, 0, 0);
+            // Add the text mesh to the scene
+            scene.add(textMesh);
+
+            // Add the text mesh to the text array
+            text.push(textMesh);
+        });
+    }
+
+    
 
 
 
-
-
-
+    // Add event listener to the "Add Text" button
+    const addTextButton = document.getElementById('addTextButton');
+    addTextButton.addEventListener('click', addText);
 
     // Create a cube geometry with default values
     const cubeGeometry = new THREE.BoxGeometry(
@@ -324,28 +406,45 @@ function initializeScene() {
         Number(depthInput.value)
     );
 
-
-
-
     // Create an array of materials for each face
     const faceMaterials = [
-        new THREE.MeshLambertMaterial({ color: 0xe7e7e7 }), // Red material for the front face   0
-        new THREE.MeshLambertMaterial({ color: 0xe7e7e7 }), // Green material for the back face   1 
-        new THREE.MeshLambertMaterial({ color: 0xe7e7e7 }), // Blue material for the top face  2
-        new THREE.MeshLambertMaterial({ color: 0xe7e7e7 }), // Yellow material for the bottom face  3
-        new THREE.MeshLambertMaterial({ color: 0xe7e7e7 }), // Magenta material for the right face  4 
-        new THREE.MeshLambertMaterial({ color: 0xe7e7e7 }) // Cyan material for the left face   5
+        new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Red material for the right face   0
+        new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Green material for the left face   1 
+        new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Blue material for the top face  2
+        new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Yellow material for the bottom face  3
+        new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Magenta material for the front face  4 
+        new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }) // Cyan material for the bakc face   5
     ];
 
+    console.log(faceMaterials[2].geometry);
     // Create a cube mesh with different materials for each face
     const cube = new THREE.Mesh(cubeGeometry, faceMaterials);
+
 
     cube.castShadow = true; // Enable the cube to cast shadows
     cube.receiveShadow = true; // Allow the cube's material to receive shadows
     scene.add(cube); // Add cube to the scene
 
+    document.addEventListener('mousewheel', onMouseWheel, false);
+    document.addEventListener('DOMMouseScroll', onMouseWheel, false); // For Firefox compatibility
+
+    function onMouseWheel(event) {
+        var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+
+        // Calculate the new camera position
+        var newCameraZ = camera.position.z - delta * 10; // Adjust the zoom speed if desired
+
+        // Restrict the camera position between z = 700 and z = 50
+        if (newCameraZ <= 800 && newCameraZ >= 300) {
+            camera.position.z = newCameraZ;
+        }
+
+        // Make the camera always look at the scene's center
+        camera.lookAt(scene.position);
+    }
     // Set camera position and add it to the scene
     camera.position.z = 550; // Top right and back position
+
     camera.lookAt(scene.position);
     scene.add(camera);
 
@@ -369,6 +468,11 @@ function initializeScene() {
 
         cube.rotation.x = startRotation.x + (targetRotation.x - startRotation.x) * t;
         cube.rotation.y = startRotation.y + (targetRotation.y - startRotation.y) * t;
+
+        // Rotate the text mesh along with the cube
+        text.forEach((textMesh) => {
+            textMesh.rotation.copy(cube.rotation);
+        });
 
         if (progress < duration) {
             requestAnimationFrame(animateInitialRotation);
@@ -406,8 +510,8 @@ function initializeScene() {
 
 
 
-
-
+    // Define a boolean variable to track whether the cube rotation should occur
+    let shouldRotateCube = true;
     function updateCube() {
         const newCubeGeometry = new THREE.BoxGeometry(
             Number(widthInput.value),
@@ -415,47 +519,92 @@ function initializeScene() {
             Number(depthInput.value)
         );
 
+        const cubeWidth = Number(widthInput.value);
+        const cubeHeight = Number(heightInput.value);
+        const cubeDepth = Number(depthInput.value);
+
+        // Calculate positions and dimensions for each face
+        const rightFacePosition = cubeWidth / 2;
+        const rightFaceWidth = cubeDepth;
+        const rightFaceHeight = cubeHeight;
+
+        const leftFacePosition = -cubeWidth / 2;
+        const leftFaceWidth = cubeDepth;
+        const leftFaceHeight = cubeHeight;
+
+        const topFacePosition = 0;
+        const topFaceWidth = cubeWidth;
+        const topFaceHeight = cubeDepth;
+
+        const bottomFacePosition = 0;
+        const bottomFaceWidth = cubeWidth;
+        const bottomFaceHeight = cubeDepth;
+
+        const frontFacePosition = 0;
+        const frontFaceWidth = cubeWidth;
+        const frontFaceHeight = cubeHeight;
+
+        const backFacePosition = 0;
+        const backFaceWidth = cubeWidth;
+        const backFaceHeight = cubeHeight;
+
+        // Log the positions and dimensions of each face
+        console.log("Right Face: ", { position: rightFacePosition, width: rightFaceWidth, height: rightFaceHeight });
+        console.log("Left Face: ", { position: leftFacePosition, width: leftFaceWidth, height: leftFaceHeight });
+        console.log("Top Face: ", { position: topFacePosition, width: topFaceWidth, height: topFaceHeight });
+        console.log("Bottom Face: ", { position: bottomFacePosition, width: bottomFaceWidth, height: bottomFaceHeight });
+        console.log("Front Face: ", { position: frontFacePosition, width: frontFaceWidth, height: frontFaceHeight });
+        console.log("Back Face: ", { position: backFacePosition, width: backFaceWidth, height: backFaceHeight });
+
+
+
+
         cube.geometry.dispose(); // Dispose of the old geometry
         cube.geometry = newCubeGeometry;
 
         console.log(colorsOfFace);
 
         let newMaterial = [
-            new THREE.MeshLambertMaterial({ color: colorsOfFace[0] }), // Red material for the front face   0
-            new THREE.MeshLambertMaterial({ color: colorsOfFace[1] }), // Green material for the back face   1 
-            new THREE.MeshLambertMaterial({ color: colorsOfFace[2] }), // Blue material for the top face  2
-            new THREE.MeshLambertMaterial({ color: colorsOfFace[3] }), // Yellow material for the bottom face  3
-            new THREE.MeshLambertMaterial({ color: colorsOfFace[4] }), // Magenta material for the right face  4 
-            new THREE.MeshLambertMaterial({ color: colorsOfFace[5] }) // Cyan material for the left face   5
+            new THREE.MeshStandardMaterial({ color: colorsOfFace[0] }), // Red material for the front face   0
+            new THREE.MeshStandardMaterial({ color: colorsOfFace[1] }), // Green material for the back face   1 
+            new THREE.MeshStandardMaterial({ color: colorsOfFace[2] }), // Blue material for the top face  2
+            new THREE.MeshStandardMaterial({ color: colorsOfFace[3] }), // Yellow material for the bottom face  3
+            new THREE.MeshStandardMaterial({ color: colorsOfFace[4] }), // Magenta material for the right face  4 
+            new THREE.MeshStandardMaterial({ color: colorsOfFace[5] }) // Cyan material for the left face   5
         ]
 
         // Update the material for all faces of the cube
         cube.material = newMaterial;
 
-        ////this is the function to animate the generated cube by rotating it a bit, everytime it is generated
-        // Set the initial and target rotation values
-        const startRotation = { x: 0, y: 0 };
-        const targetRotation = { x: Math.PI / 6, y: Math.PI / 4 };
 
-        const duration = 1000; // Animation duration in milliseconds
-        let startTime = null;
+        if (shouldRotateCube) {
+            // Perform cube rotation logic here
+            // ...
 
-        function animateInitialRotation(timestamp) {
-            if (!startTime) startTime = timestamp;
+            ////this is the function to animate the generated cube by rotating it a bit, everytime it is generated
+            // Set the initial and target rotation values
+            const startRotation = { x: 0, y: 0 };
+            const targetRotation = { x: Math.PI / 6, y: Math.PI / 4 };
 
-            const progress = timestamp - startTime;
-            const t = Math.min(progress / duration, 1); // Calculate the progress of the animation as a value between 0 and 1
+            const duration = 1000; // Animation duration in milliseconds
+            let startTime = null;
 
-            cube.rotation.x = startRotation.x + (targetRotation.x - startRotation.x) * t;
-            cube.rotation.y = startRotation.y + (targetRotation.y - startRotation.y) * t;
+            function animateInitialRotation(timestamp) {
+                if (!startTime) startTime = timestamp;
 
-            if (progress < duration) {
-                requestAnimationFrame(animateInitialRotation);
+                const progress = timestamp - startTime;
+                const t = Math.min(progress / duration, 1); // Calculate the progress of the animation as a value between 0 and 1
+
+                cube.rotation.x = startRotation.x + (targetRotation.x - startRotation.x) * t;
+                cube.rotation.y = startRotation.y + (targetRotation.y - startRotation.y) * t;
+
+                if (progress < duration) {
+                    requestAnimationFrame(animateInitialRotation);
+                }
             }
+
+            requestAnimationFrame(animateInitialRotation);
         }
-
-        requestAnimationFrame(animateInitialRotation);
-
     }
 
     // Rotate the cube on mouse click and drag

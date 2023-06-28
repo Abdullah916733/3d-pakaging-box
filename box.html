@@ -85,6 +85,24 @@
                     </span>
                     <button id="changeColorButton" class="button-hide">Change Color</button>
 
+                    <!-- input customized text -->
+                    <input class="form-select common-select2" type="text" id="text-input" placeholder="Enter text">
+                    <select class="form-select common-select2" id="fontselector"> 
+                    </select>
+                    <button id="addTextButton">Add Text</button>
+
+                    <input type="file" id="imageInput" accept="image/*" />
+
+                    <div id="popupContainer">
+                        <div id="imagePopup">
+                            <div id="imageWrapper">
+                                <img id="uploadedImage">
+                            </div>
+                            <button id="okButton">OK</button>
+                        </div>
+                    </div>
+
+
                 </div>
                 <div id="cube-container" style="width: 100%; height: 100vh;"></div>
 
@@ -99,8 +117,11 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.130.0/build/three.min.js"></script>
     <!-- <script src="path/to/TweenMax.min.js"></script> -->
 
-
+    
+    <script src="./fonts.js"></script>
     <script src="./box.js"></script>
+
+
 </body>
 
 </html>

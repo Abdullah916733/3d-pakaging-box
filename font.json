@@ -1,0 +1,45 @@
+{
+    "fonts": [
+      {
+        "name": "Open Sans",
+        "url": "https://fonts.google.com/specimen/Open+Sans"
+      },
+      {
+        "name": "Roboto",
+        "url": "https://fonts.google.com/specimen/Roboto"
+      },
+      {
+        "name": "Montserrat",
+        "url": "https://fonts.google.com/specimen/Montserrat"
+      },
+      {
+        "name": "Lato",
+        "url": "https://fonts.google.com/specimen/Lato"
+      },
+      {
+        "name": "Raleway",
+        "url": "https://fonts.google.com/specimen/Raleway"
+      },
+      {
+        "name": "Ubuntu",
+        "url": "https://fonts.google.com/specimen/Ubuntu"
+      },
+      {
+        "name": "Poppins",
+        "url": "https://fonts.google.com/specimen/Poppins"
+      },
+      {
+        "name": "Nunito",
+        "url": "https://fonts.google.com/specimen/Nunito"
+      },
+      {
+        "name": "Oswald",
+        "url": "https://fonts.google.com/specimen/Oswald"
+      },
+      {
+        "name": "Source Sans Pro",
+        "url": "https://fonts.google.com/specimen/Source+Sans+Pro"
+      }
+    ]
+  }
+  
