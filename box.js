@@ -320,13 +320,24 @@ function initializeScene() {
         }
     }
 
-    //   change face Image
-    const imageInput = document.getElementById('imageInput');
-    imageInput.addEventListener('change', handleImageUpload);
+    // Add event listeners to the alignment buttons
+    const alignLeftButton = document.getElementById('alignLeft');
+    const alignTopButton = document.getElementById('alignTop');
+    const alignCenterButton = document.getElementById('alignCenter');
+    const alignRightButton = document.getElementById('alignRight');
+    const alignBottomButton = document.getElementById('alignBottom');
 
+    alignLeftButton.addEventListener('click', handleAlignmentButtonClick);
+    alignTopButton.addEventListener('click', handleAlignmentButtonClick);
+    alignCenterButton.addEventListener('click', handleAlignmentButtonClick);
+    alignRightButton.addEventListener('click', handleAlignmentButtonClick);
+    alignBottomButton.addEventListener('click', handleAlignmentButtonClick);
 
-    function handleImageUpload(event) {
-        const file = event.target.files[0];
+    function handleAlignmentButtonClick(event) {
+        
+        const alignment = event.target.id; // Get the alignment from the clicked button's id
+
+        const file = imageInput.files[0];
         const reader = new FileReader();
 
         reader.onload = function (e) {
@@ -334,16 +345,79 @@ function initializeScene() {
             image.src = e.target.result;
 
             image.onload = function () {
-                const texture = new THREE.Texture(image);
-                texture.needsUpdate = true;
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
 
-                const material = new THREE.MeshLambertMaterial({ map: texture });
-                cube.material[activeFaceIndex] = material; // Set the material to the desired cube face
+                // Set the canvas dimensions to the desired size
+                canvas.width = 300;
+                canvas.height = 300;
+
+                // Calculate the position based on the alignment
+                let x, y;
+
+                switch (alignment) {
+                    case 'alignLeft':
+                        x = 0;
+                        y = (canvas.height - image.height) / 2;
+                        break;
+                    case 'alignTop':
+                        x = (canvas.width - image.width) / 2;
+                        y = 0;
+                        break;
+                    case 'alignCenter':
+                        x = (canvas.width - image.width) / 2;
+                        y = (canvas.height - image.height) / 2;
+                        break;
+                    case 'alignRight':
+                        x = canvas.width - image.width;
+                        y = (canvas.height - image.height) / 2;
+                        break;
+                    case 'alignBottom':
+                        x = (canvas.width - image.width) / 2;
+                        y = canvas.height - image.height;
+                        break;
+                    default:
+                        x = (canvas.width - image.width) / 2;
+                        y = (canvas.height - image.height) / 2;
+                        break;
+                }
+
+                // Draw the active face color
+                context.fillStyle = '#e7e7e7';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw the image onto the canvas at the desired position
+                context.drawImage(image, x, y, image.width, image.height);
+
+                // Convert the canvas back to a data URL
+                const resizedDataURL = canvas.toDataURL();
+
+                const texture = new THREE.Texture();
+                texture.image = new Image();
+                texture.image.onload = function () {
+                    texture.needsUpdate = true;
+                    texture.premultiplyAlpha = true;
+
+                    texture.repeat.set(1, 1);
+
+                    const material = new THREE.MeshLambertMaterial({ map: texture, color: colorsOfFace[activeFaceIndex] });
+                    cube.material[activeFaceIndex] = material; // Set the material to the desired cube face
+
+                    
+                };
+
+                texture.image.src = resizedDataURL;
+                
             };
         };
-
+        
         reader.readAsDataURL(file);
+        // Trigger the alignment button click event
+      
     }
+    
+
+
 
     // Load the font asynchronously
 
@@ -391,7 +465,7 @@ function initializeScene() {
         });
     }
 
-    
+
 
 
 

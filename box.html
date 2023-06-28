@@ -87,12 +87,20 @@
 
                     <!-- input customized text -->
                     <input class="form-select common-select2" type="text" id="text-input" placeholder="Enter text">
-                    <select class="form-select common-select2" id="fontselector"> 
+                    <select class="form-select common-select2" id="fontselector">
                     </select>
                     <button id="addTextButton">Add Text</button>
 
-                    <input type="file" id="imageInput" accept="image/*" />
-
+                    <div style="display:flex; flex-direction: column; gap: 1rem;">
+                        <input type="file" id="imageInput" accept="image/*" />
+                        <div style="display: flex;">
+                            <button id="alignLeft">left</button>
+                            <button id="alignTop">top</button>
+                            <button id="alignCenter">center</button>
+                            <button id="alignRight">right</button>
+                            <button id="alignBottom">bottom</button>
+                        </div>
+                    </div>
                     <div id="popupContainer">
                         <div id="imagePopup">
                             <div id="imageWrapper">
@@ -117,7 +125,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.130.0/build/three.min.js"></script>
     <!-- <script src="path/to/TweenMax.min.js"></script> -->
 
-    
+
     <script src="./fonts.js"></script>
     <script src="./box.js"></script>
 

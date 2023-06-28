@@ -54,3 +54,81 @@ text addition
             scene.add(textMesh);
         });
     }
+
+        function addText() {
+        const text = document.getElementById('text-input').value; // Get the text from the input field
+        const fontSelector = document.getElementById('fontselector'); // Get the font selector dropdown element
+        const selectedFontUrl = fontSelector.value; // Get the selected font URL
+        console.log(fontSelector.value)
+        const loader = new THREE.FontLoader();
+        loader.load(selectedFontUrl, function (font) {
+            // Create a text geometry
+            const textGeometry = new THREE.TextGeometry(text, {
+                font: font,
+                size: 20,
+                height: 0,
+                curveSegments: 12,
+                bevelEnabled: false
+            });
+
+            // Create a material for the text
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0x1d1d1d });
+
+            // Create a mesh for the text
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+            // Set the position and rotation of the text mesh
+            textMesh.position.set(200, 0, 0);
+            textMesh.rotation.set(0, 0, 0);
+
+            // Add the text mesh to the scene
+            scene.add(textMesh);
+        });
+    }
+
+
+    # final code:
+     function addText() {
+        const text = document.getElementById('text-input').value; // Get the text from the input field
+        const fontSelector = document.getElementById('fontselector'); // Get the font selector dropdown element
+        const selectedFontUrl = fontSelector.value; // Get the selected font URL
+
+        if (activeFaceIndex !== null) { // Check if an active face is selected
+            const loader = new THREE.FontLoader();
+            loader.load(selectedFontUrl, function (font) {
+                // Create a text geometry
+                const textGeometry = new THREE.TextGeometry(text, {
+                    font: font,
+                    size: 20,
+                    height: 0,
+                    curveSegments: 12,
+                    bevelEnabled: false
+                });
+
+                // Create a material for the text
+                const textMaterial = new THREE.MeshBasicMaterial({ color: 0x1d1d1d });
+
+                // Create a mesh for the text
+                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+                // Position the text mesh at the center of the active face
+                const faceCenter = getFaceCenter(activeFaceIndex);
+                textMesh.position.copy(faceCenter);
+
+                // Calculate the size of the text mesh
+                const textSize = new THREE.Vector3();
+                new THREE.Box3().setFromObject(textMesh).getSize(textSize);
+
+                // Center the text mesh on the active face
+                textMesh.position.x -= textSize.x / 2;
+                textMesh.position.y -= textSize.y / 2;
+
+                // Set the rotation of the text mesh to match the active face's rotation
+                const rotation = getRotationByFace(faceButtons[activeFaceIndex].dataset.face);
+                textMesh.rotation.set(rotation.x, rotation.y, 0);
+
+                // Add the text mesh to the scene
+                scene.add(textMesh);
+            });
+        }
+    }
