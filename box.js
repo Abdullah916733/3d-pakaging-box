@@ -334,7 +334,6 @@ function initializeScene() {
     alignBottomButton.addEventListener('click', handleAlignmentButtonClick);
 
     function handleAlignmentButtonClick(event) {
-        
         const alignment = event.target.id; // Get the alignment from the clicked button's id
 
         const file = imageInput.files[0];
@@ -348,9 +347,13 @@ function initializeScene() {
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
 
+                // Get the desired canvas dimensions from the input fields
+                const inputHeight = parseInt(document.getElementById('imageHeight').value);
+                const inputWidth = parseInt(document.getElementById('imageWidth').value);
+
                 // Set the canvas dimensions to the desired size
-                canvas.width = 300;
-                canvas.height = 300;
+                canvas.width = inputWidth || 200; // Use the input value or default to 200 if empty
+                canvas.height = inputHeight || 200; // Use the input value or default to 200 if empty
 
                 // Calculate the position based on the alignment
                 let x, y;
@@ -402,20 +405,100 @@ function initializeScene() {
 
                     const material = new THREE.MeshLambertMaterial({ map: texture, color: colorsOfFace[activeFaceIndex] });
                     cube.material[activeFaceIndex] = material; // Set the material to the desired cube face
-
-                    
                 };
 
                 texture.image.src = resizedDataURL;
-                
             };
         };
-        
+
         reader.readAsDataURL(file);
-        // Trigger the alignment button click event
-      
     }
-    
+
+
+
+    // jquery for image uploading
+
+    // Start upload preview image
+    $(".gambar").attr("src", "https://user.gadjian.com/static/images/personnel_boy.png");
+    var $uploadCrop,
+        tempFilename,
+        rawImg,
+        imageId;
+    function readFile(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('.upload-demo').addClass('ready');
+                $('#cropImagePop').modal('show');
+                rawImg = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+        else {
+            swal("Sorry - your browser doesn't support the FileReader API");
+        }
+    }
+
+    let uploadDemo = document.getElementById('upload-demo');
+    uploadDemo.style.height = activeFace.offsetHeight+ 'px';
+    uploadDemo.style.width = activeFace.offsetWidth + 'px';
+
+    $uploadCrop = $('#upload-demo').croppie({
+        viewport: {
+            width: activeFace.offsetWidth, // Set the width to the active face width
+            height: activeFace.offsetHeight, // Set the height to the active face height
+        },
+        enforceBoundary: false,
+        enableExif: true
+    });
+
+    $('#cropImagePop').on('shown.bs.modal', function () {
+        // alert('Shown pop');
+        $uploadCrop.croppie('bind', {
+            url: rawImg
+        }).then(function () {
+            console.log('jQuery bind complete');
+        });
+    });
+
+    $('.item-img').on('change', function () {
+        imageId = $(this).data('id');
+        tempFilename = $(this).val();
+        $('#cancelCropBtn').data('id', imageId);
+        readFile(this);
+    });
+
+    $('#cropImageBtn').on('click', function (ev) {
+        $uploadCrop.croppie('result', {
+            type: 'base64',
+            format: 'jpeg',
+            size: {
+                width: activeFace.offsetWidth, // Set the width to the active face width
+                height: activeFace.offsetHeight, // Set the height to the active face height
+            }
+        }).then(function (resp) {
+            // Update the active face image with the cropped image
+            // After getting the active face dimensions
+            const activeFaceWidth = activeFace.offsetWidth;
+            const activeFaceHeight = activeFace.offsetHeight;
+            const activeFaceImage = $('#activeFaceImage');
+            activeFaceImage.width(activeFaceWidth);
+            activeFaceImage.height(activeFaceHeight);
+            activeFaceImage.attr('src', resp);
+            viewportWidth = $uploadCrop.croppie('get').points[2] - $uploadCrop.croppie('get').points[0];
+            viewportHeight = $uploadCrop.croppie('get').points[3] - $uploadCrop.croppie('get').points[1];
+
+            $('#cropImagePop').modal('hide');
+
+            // Call the handleAlignmentButtonClick function with the alignment of the last clicked button
+            const alignmentButtons = document.getElementsByClassName('alignment-button');
+            const lastClickedButton = Array.from(alignmentButtons).find(button => button.classList.contains('active'));
+            if (lastClickedButton) {
+                const alignment = lastClickedButton.id;
+                handleAlignmentButtonClick({ target: { id: alignment } });
+            }
+        });
+    });
 
 
 
@@ -490,7 +573,6 @@ function initializeScene() {
         new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }) // Cyan material for the bakc face   5
     ];
 
-    console.log(faceMaterials[2].geometry);
     // Create a cube mesh with different materials for each face
     const cube = new THREE.Mesh(cubeGeometry, faceMaterials);
 
