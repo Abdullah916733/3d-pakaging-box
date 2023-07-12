@@ -617,21 +617,15 @@ function initializeScene() {
   });
 
   //  image upload functionality section start
-  // var textureLoader = new THREE.TextureLoader();
+
   var faceMaterialsDefualt = [
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
+    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
+    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
+    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
+    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
+    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
+    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
   ];
-  
-  
-  const imageInput = document.getElementById("imageInput");
-  imageInput.addEventListener("change", (event) => {
-    imageCube(event.target.files[0]);
-  });
 
   function imageCube(imageValue) {
     const file = imageValue;
@@ -639,91 +633,68 @@ function initializeScene() {
     reader.onload = function (e) {
       const image = new Image();
       image.src = e.target.result;
-      image.onload =  function () {
+      image.onload = function () {
         const texture = new THREE.Texture();
         texture.image = image;
         texture.needsUpdate = true;
 
-console.log("activeFaceIndex ",activeFaceIndex)
         switch (selectedFace) {
-            case "top":
-                console.log("selectedFace ",selectedFace)
-                faceMaterialsDefualt[2].map = texture
-                faceMaterialsDefualt[2].needsUpdate = true
-                cube.material = faceMaterialsDefualt
-                break;
-                
-            case "bottom":
-              console.log("selectedFace ",selectedFace)
-              faceMaterialsDefualt[3].map = texture
-              faceMaterialsDefualt[3].needsUpdate = true
-              cube.material = faceMaterialsDefualt
-              break;
-              
-            case "right":
-              console.log("selectedFace ",selectedFace)
-              faceMaterialsDefualt[0].map = texture
-              faceMaterialsDefualt[0].needsUpdate = true
-              cube.material = faceMaterialsDefualt
-              break;
-              
-            case "left":
-              console.log("selectedFace ",selectedFace)
-              faceMaterialsDefualt[1].map = texture
-              faceMaterialsDefualt[1].needsUpdate = true
-              cube.material = faceMaterialsDefualt
-              break;
-              
-            case "front":
-              console.log("selectedFace ",selectedFace)
-              faceMaterialsDefualt[4].map = texture
-              faceMaterialsDefualt[4].needsUpdate = true
-              cube.material = faceMaterialsDefualt
-              break;
-                          
-            case "back":
-              console.log("selectedFace ",selectedFace)
-              faceMaterialsDefualt[5].map = texture
-              faceMaterialsDefualt[5].needsUpdate = true
-              cube.material = faceMaterialsDefualt
-              break;
+          case "top":
+            faceMaterialsDefualt[2].map = texture;
+            faceMaterialsDefualt[2].needsUpdate = true;
+            cube.material = faceMaterialsDefualt;
+            break;
 
-            default:
-              console.log("faceMaterialsDefualt ",faceMaterialsDefualt)
-              faceMaterialsDefualt.map = texture
-              faceMaterialsDefualt.needsUpdate = true
-              cube.material = faceMaterialsDefualt
-              break;
-           }
+          case "bottom":
+            faceMaterialsDefualt[3].map = texture;
+            faceMaterialsDefualt[3].needsUpdate = true;
+            cube.material = faceMaterialsDefualt;
+            break;
 
-        cube.material = faceMaterialsDefualt
-        console.log("faceMaterialsDefualt ",faceMaterialsDefualt)
+          case "right":
+            faceMaterialsDefualt[0].map = texture;
+            faceMaterialsDefualt[0].needsUpdate = true;
+            cube.material = faceMaterialsDefualt;
+            break;
+
+          case "left":
+            faceMaterialsDefualt[1].map = texture;
+            faceMaterialsDefualt[1].needsUpdate = true;
+            cube.material = faceMaterialsDefualt;
+            break;
+
+          case "front":
+            faceMaterialsDefualt[4].map = texture;
+            faceMaterialsDefualt[4].needsUpdate = true;
+            cube.material = faceMaterialsDefualt;
+            break;
+
+          case "back":
+            faceMaterialsDefualt[5].map = texture;
+            faceMaterialsDefualt[5].needsUpdate = true;
+            cube.material = faceMaterialsDefualt;
+            break;
+
+          default:
+            faceMaterialsDefualt.map((value) => {
+              value.map = texture;
+              value.needsUpdate = true;
+            });
+            cube.material = faceMaterialsDefualt;
+            break;
+        }
+
+        cube.material = faceMaterialsDefualt;
       };
     };
     reader.readAsDataURL(file);
     requestAnimationFrame(animateInitialRotation);
   }
 
-
-  // const addText = document.getElementById("addTextButton");
-  // const inputText = document.getElementById("text-input");
-  // addText.addEventListener("click", (event) => {
-  //   console.log("inputText ",inputText.value)
-  // });
-
-
-
-  // var textforSelectedFace = [
-  //   new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-  //   new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-  //   new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-  //   new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-  //   new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-  //   new THREE.MeshBasicMaterial({ color: 0xe7e7e7}),
-  // ];
-  // function addTextOnSelectedFace(){
-
-  // }
+  const imageInput = document.getElementById("imageInput");
+  imageInput.addEventListener("change", (event) => {
+    imageCube(event.target.files[0]);
+  });
 }
 
 //  image upload functionality section end
