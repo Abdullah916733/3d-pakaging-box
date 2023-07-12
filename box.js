@@ -618,6 +618,11 @@ function initializeScene() {
 
   //  image upload functionality section start
 
+  const image_show_modal = document.querySelector(".image_show_modal img");
+  const save_design = document.querySelector(".save_design");
+  const imageInput = document.getElementById("imageInput");
+  const image_cancel = document.querySelectorAll(".image_cancel");
+
   var faceMaterialsDefualt = [
     new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
     new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
@@ -627,8 +632,8 @@ function initializeScene() {
     new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
   ];
 
-  function imageCube(imageValue) {
-    const file = imageValue;
+  save_design.addEventListener("click", function () {
+    const file = imageInput.files[0];
     const reader = new FileReader();
     reader.onload = function (e) {
       const image = new Image();
@@ -683,15 +688,24 @@ function initializeScene() {
             cube.material = faceMaterialsDefualt;
             break;
         }
-
         cube.material = faceMaterialsDefualt;
       };
     };
     reader.readAsDataURL(file);
+    image_show_modal.src = null;
     requestAnimationFrame(animateInitialRotation);
+  });
+
+  function imageCube(imageValue) {
+    image_show_modal.src = URL.createObjectURL(imageValue);
   }
 
-  const imageInput = document.getElementById("imageInput");
+  image_cancel.forEach((value) => {
+    value.addEventListener("click", function () {
+      return (image_show_modal.src = null);
+    });
+  });
+
   imageInput.addEventListener("change", (event) => {
     imageCube(event.target.files[0]);
   });

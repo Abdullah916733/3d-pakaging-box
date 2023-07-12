@@ -52,3 +52,4 @@ fontsData.fonts.forEach(font => {
     option.value = font.url;
     selectElement.appendChild(option);
 });
+

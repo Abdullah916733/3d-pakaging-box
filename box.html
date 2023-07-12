@@ -1,161 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> -->
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
-    <link rel='stylesheet' href='https://foliotek.github.io/Croppie/croppie.css'>
-    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
-    <link rel="stylesheet" href="./box.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://foliotek.github.io/Croppie/croppie.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="./box.css" />
     <title>3D Box Model</title>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <div class="productDetailContainer container">
-        <div class="row section1">
+      <div class="row section1">
+        <div class="row" style="margin-top: 1rem" id="cube-form">
+          <select class="form-select common-select2">
+            <option>
+              <button type="button" class="btn btn-primary">Select size</button>
+            </option>
+            <option>
+              <button type="button" class="btn btn-primary">
+                2.5 x 2.5 x 1.5
+              </button>
+            </option>
+            <option>
+              <button type="button" class="btn btn-primary">
+                3.25 x 3.25 x 1.25
+              </button>
+            </option>
+            <option>
+              <button type="button" class="btn btn-primary">4 x 4 x 1.5</button>
+            </option>
+            <option>
+              <button type="button" class="btn btn-primary">
+                Choose custom
+              </button>
+            </option>
+          </select>
+          <button id="myButton" class="button-hide">2.5 x 2.5 x 1.5</button>
+          <button id="myButton2" class="button-hide">3.25 x 3.25 x 1.25</button>
+          <button id="myButton3" class="button-hide">4 x 4 x 1.5</button>
 
+          <button id="custom-choice" class="button-hide">
+            Choose custom style
+          </button>
+          <form action="#" method="POST" onsubmit="return false;">
+            <!-- Dimension inputs -->
+            <label for="width">Length:</label>
+            <input type="number" name="width" id="width" />
+            <label for="height">Width:</label>
+            <input type="number" name="height" id="height" />
+            <label for="depth">Depth:</label>
+            <input type="number" name="depth" id="depth" />
+            <!-- Add inputs for height and depth -->
+            <br />
+            <!-- Color selection -->
+            <label for="color">Color:</label>
 
-            <div class="row" style="margin-top:1rem" id="cube-form">
-                <select class="form-select common-select2">
-                    <option>
-                        <button type="button" class="btn btn-primary">Select size </button>
-                    </option>
-                    <option>
-                        <button type="button" class="btn btn-primary">2.5 x 2.5 x 1.5</button>
-                    </option>
-                    <option>
-                        <button type="button" class="btn btn-primary">3.25 x 3.25 x 1.25</button>
-                    </option>
-                    <option>
-                        <button type="button" class="btn btn-primary">4 x 4 x 1.5</button>
-                    </option>
-                    <option>
-                        <button type="button" class="btn btn-primary">Choose custom</button>
-                    </option>
-                </select>
-                <button id="myButton" class="button-hide">2.5 x 2.5 x 1.5</button>
-                <button id="myButton2" class="button-hide">3.25 x 3.25 x 1.25</button>
-                <button id="myButton3" class="button-hide">4 x 4 x 1.5</button>
+            <button type="button" id="saveButton">Save</button>
+          </form>
 
-                <button id="custom-choice" class="button-hide"> Choose custom style</button>
-                <form action="#" method="POST" onsubmit="return false;">
-                    <!-- Dimension inputs -->
-                    <label for="width">Length:</label>
-                    <input type="number" name="width" id="width">
-                    <label for="height">Width:</label>
-                    <input type="number" name="height" id="height">
-                    <label for="depth">Depth:</label>
-                    <input type="number" name="depth" id="depth">
-                    <!-- Add inputs for height and depth -->
-                    <br>
-                    <!-- Color selection -->
-                    <label for="color">Color:</label>
+          <div class="face-btn-container">
+            <button
+              id="topButton"
+              class="face-button"
+              data-face="top"
+              data-index="2"
+            >
+              <img src="./assets/top.svg" alt="" /> <br />
+              Top
+            </button>
+            <button
+              id="bottomButton"
+              class="face-button"
+              data-face="bottom"
+              data-index="3"
+            >
+              <img src="./assets/bottom.svg" alt="" /><br />Bottom
+            </button>
+            <button
+              id="frontButton"
+              class="face-button"
+              data-face="front"
+              data-index="4"
+            >
+              <img src="./assets/front.svg" alt="" /><br />Front
+            </button>
+            <button
+              id="backButton"
+              class="face-button"
+              data-face="back"
+              data-index="5"
+            >
+              <img src="./assets/back.svg" alt="" /><br />Back
+            </button>
+            <button
+              id="leftButton"
+              class="face-button"
+              data-face="left"
+              data-index="1"
+            >
+              <img src="./assets//left.svg" alt="" /><br />Left
+            </button>
+            <button
+              id="rightButton"
+              class="face-button"
+              data-face="right"
+              data-index="0"
+            >
+              <img src="./assets/right.svg" alt="" /><br />Right
+            </button>
+          </div>
+          <div style="display: flex; gap: 1rem; align-items: center">
+            <input type="color" name="color" id="color" /><span>
+              <p>Change Box color</p>
+            </span>
+            <button id="updateColorButton" class="button-hide">
+              Update Cube
+            </button>
 
+            <input type="color" id="colorPicker" value="#ffffff" /><span>
+              <p>Change Face color</p>
+            </span>
+            <button id="changeColorButton" class="button-hide">
+              Change Color
+            </button>
 
-                    <button type="button" id="saveButton">Save</button>
-                </form>
+            <!-- input customized text -->
+            <input
+              class="form-select common-select2"
+              type="text"
+              id="text-input"
+              placeholder="Enter text"
+            />
+            <select
+              class="form-select common-select2"
+              id="fontselector"
+            ></select>
+            <button id="addTextButton">Add Text</button>
 
-                <div class="face-btn-container">
-                    <button id="topButton" class="face-button" data-face="top" data-index="2"><img
-                            src="./assets/top.svg" alt=""> <br>
-                        Top</button>
-                    <button id="bottomButton" class="face-button" data-face="bottom" data-index="3"><img
-                            src="./assets/bottom.svg" alt=""><br>Bottom</button>
-                    <button id="frontButton" class="face-button" data-face="front" data-index="4"><img
-                            src="./assets/front.svg" alt=""><br>Front</button>
-                    <button id="backButton" class="face-button" data-face="back" data-index="5"><img
-                            src="./assets/back.svg" alt=""><br>Back</button>
-                    <button id="leftButton" class="face-button" data-face="left" data-index="1"><img
-                            src="./assets//left.svg" alt=""><br>Left</button>
-                    <button id="rightButton" class="face-button" data-face="right" data-index="0"><img
-                            src="./assets/right.svg" alt=""><br>Right</button>
+            <div style="display: flex; flex-direction: column; gap: 1rem">
+              <input
+                type="file"
+                id="imageInput"
+                class="item-img file center-block"
+                name="file_photo"
+                data-toggle="modal"
+                data-target="#exampleModal"
+              />
 
-                </div>
-                <div style="display: flex; gap: 1rem; align-items: center;">
-                    <input type="color" name="color" id="color"><span>
-                        <p>Change Box color</p>
-                    </span>
-                    <button id="updateColorButton" class="button-hide">Update Cube</button>
-
-
-                    <input type="color" id="colorPicker" value="#ffffff"><span>
-                        <p>Change Face color</p>
-                    </span>
-                    <button id="changeColorButton" class="button-hide">Change Color</button>
-
-                    <!-- input customized text -->
-                    <input class="form-select common-select2" type="text" id="text-input" placeholder="Enter text">
-                    <select class="form-select common-select2" id="fontselector">
-                    </select>
-                    <button id="addTextButton">Add Text</button>
-
-                    <div style="display:flex; flex-direction: column; gap: 1rem;">
-                        <input type="file"  id="imageInput" class="item-img file center-block" name="file_photo" />
-                   
-                        </label>
-                        <div style="display: flex;">
-                            <button id="alignLeft">left</button>
-                            <button id="alignTop">top</button>
-                            <button id="alignCenter">center</button>
-                            <button id="alignRight">right</button>
-                            <button id="alignBottom">bottom</button>
-                            <input type="text" placeholder="height" id="imageHeight">
-                            <input type="text" placeholder="width" id="imageWidth">
-                        </div>
-                    </div>
-              
-                    <div class="modal fade" id="cropImagePop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                            aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title" id="myModalLabel">
-                                        <?=multiLanguage( "Edit Foto" , "Edit Photo" )?>
-                                    </h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div id="upload-demo" class="center-block"></div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button type="button" id="cropImageBtn" class="btn btn-primary">Crop</button>
-                                </div>
-                            </div>
-                        </div>
-                        <img id="activeFaceImage" src="" alt="Active Face Image">
-
-                    </div>
-
-
-                </div>
-                <div id="cube-container" style="width: 100%; height: 100vh;"></div>
-
-
-
+              <div style="display: flex">
+                <button id="alignLeft">left</button>
+                <button id="alignTop">top</button>
+                <button id="alignCenter">center</button>
+                <button id="alignRight">right</button>
+                <button id="alignBottom">bottom</button>
+                <input type="text" placeholder="height" id="imageHeight" />
+                <input type="text" placeholder="width" id="imageWidth" />
+              </div>
             </div>
+          </div>
+          <div id="cube-container" style="width: 100%; height: 100vh"></div>
         </div>
+      </div>
     </div>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script> -->
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Face Preview</h5>
+            <button
+              type="button"
+              class="close image_cancel"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="image_show_modal">
+              <img src="" alt="image" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary image_cancel"
+              data-dismiss="modal"
+            >
+              Delete
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary save_design"
+              data-dismiss="modal"
+            >
+              Save face design
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.130.0/build/three.min.js"></script>
-    <!-- <script src="path/to/TweenMax.min.js"></script> -->
-    <!-- partial -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
-    <script src='https://foliotek.github.io/Croppie/croppie.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
-
-    <!-- <script src="https://threejs.org/examples/js/renderers/CSS3DRenderer.js"></script> -->
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://foliotek.github.io/Croppie/croppie.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="./fonts.js"></script>
     <script src="./box.js"></script>
 
-
-</body>
-
+    <script>
+      $("#myModal").on("shown.bs.modal", function () {
+        $("#myInput").trigger("focus");
+      });
+    </script>
+  </body>
 </html>
