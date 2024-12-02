@@ -1,9 +1,32 @@
 function initializeScene() {
-  // Get the container element
-  const container = document.getElementById("cube-container");
+  // custom state start
+  function useState(initialValue) {
+    let state = initialValue;
 
-  // Create a scene, camera, and renderer using Three.js
-  const scene = new THREE.Scene(); //A scene in Three.js represents a container or environment where you can place and manipulate objects, lights, cameras, and other elements of a 3D scene.
+    function setState(newState) {
+      state = newState;
+      return state;
+    }
+
+    return [state, setState];
+  }
+  // custom state end
+
+  const [boxValue, setBoxValue] = useState({
+    width: 200,
+    height: 200,
+    depthInput: 200,
+    color: ["", "", "", "", "", ""],
+    image: ["", "", "", "", "", ""],
+    text: [],
+    positionX: 200,
+    positionY: 200,
+  });
+
+  // Create a scene, camera, and renderer using Three.js start
+
+  const container = document.getElementById("cube-container");
+  const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     75,
     container.clientWidth / container.clientHeight,
@@ -13,213 +36,97 @@ function initializeScene() {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setClearColor(0x808080);
-  renderer.shadowMap.enabled = true; // Enable shadow mapping
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Set shadow map type for smoother shadows
-
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
-  let initialColor = "#e7e7e7";
+  // Create a scene, camera, and renderer using Three.js end
 
-  let colorsOfFace = [
-    initialColor,
-    initialColor,
-    initialColor,
-    initialColor,
-    initialColor,
-    initialColor,
-  ];
-  // Add a click event listener to the button
+  // Add a click event listener to the button start
 
+  const colorInput = document.getElementById("color");
+  const saveButton = document.getElementById("saveButton");
   let widthInput = document.getElementById("width");
   let heightInput = document.getElementById("height");
   let depthInput = document.getElementById("depth");
-  const colorInput = document.getElementById("color");
-  const updateButton = document.getElementById("updateColorButton");
+  const size_select = document.querySelector("#size-form");
 
-  updateButton.addEventListener("click", function () {
-    updateCube();
-  });
-  colorInput.addEventListener("change", function () {
-    const colorValue = colorInput.value;
-
-    // Update colorsOfFace array for elements with initial color
-    colorsOfFace = colorsOfFace.map((color) =>
-      color === initialColor ? colorValue : color
-    );
-
-    // Update initialColor value
-    initialColor = colorValue;
-
-    shouldRotateCube = false;
-    updateCube();
-
-    // Reset the rotation flag
-    shouldRotateCube = true;
-  });
-  const saveButton = document.getElementById("saveButton");
-
-  // Disable all inputs initially
+  widthInput.value = boxValue.width;
+  heightInput.value = boxValue.height;
+  depthInput.value = boxValue.depthInput;
+  colorInput.value = "#e7e7e7";
   widthInput.disabled = true;
   heightInput.disabled = true;
   depthInput.disabled = true;
-  // colorInput.disabled = true;
   saveButton.disabled = true;
 
-  // Add a click event listener to the "Choose custom style" button
-  const customChoiceButton = document.getElementById("custom-choice");
-  customChoiceButton.addEventListener("click", () => {
-    // Enable all inputs
-    widthInput.disabled = false;
-    heightInput.disabled = false;
-    depthInput.disabled = false;
-    colorInput.disabled = false;
-    saveButton.disabled = false;
-  });
+  // Add a click event listener to the button end
 
-  const selectElement = document.querySelector(".form-select");
+  // box geometry start
 
-  const button1 = document.getElementById("myButton");
-  const button2 = document.getElementById("myButton2");
-  const button3 = document.getElementById("myButton3");
+  const cubeGeometry = new THREE.BoxGeometry(
+    Number(widthInput.value),
+    Number(heightInput.value),
+    Number(depthInput.value)
+  );
 
-  selectElement.addEventListener("change", function () {
-    const selectedOption = selectElement.selectedIndex;
+  const faceMaterials = [
+    new THREE.MeshStandardMaterial({
+      color: 0xe7e7e7,
+    }), // Red material for the right face   0
+    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Green material for the left face   1
+    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Blue material for the top face  2
+    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Yellow material for the bottom face  3
+    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Magenta material for the front face  4
+    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Cyan material for the back face   5
+  ];
 
-    if (selectedOption === 1) {
-      button1.click();
-    } else if (selectedOption === 2) {
-      button2.click();
-    } else if (selectedOption === 3) {
-      button3.click();
-    } else if (selectedOption === 4) {
-      customChoiceButton.click();
+  const cube = new THREE.Mesh(cubeGeometry, faceMaterials);
+  cube.castShadow = true;
+  cube.receiveShadow = true;
+  scene.add(cube);
+
+  // box geometry end
+
+  // add size functionality start
+
+  size_select.addEventListener("change", () => {
+    const sizeValue = size_select.value;
+    if (sizeValue != "custom") {
+      const sizeSplit = sizeValue.split(",");
+      let width = sizeSplit[0];
+      let height = sizeSplit[1];
+      let depth = sizeSplit[2];
+      widthValue = width;
+      heightValue = height;
+      depthValue = depth;
+      widthInput.value = widthValue;
+      heightInput.value = heightValue;
+      depthInput.value = depthValue;
+      setBoxValue((boxValue.width = widthInput.value));
+      setBoxValue((boxValue.height = heightInput.value));
+      setBoxValue((boxValue.depth = depthInput.value));
+      updateCube(widthValue, heightValue, depthValue);
+    } else {
+      widthInput.disabled = false;
+      heightInput.disabled = false;
+      depthInput.disabled = false;
+      saveButton.disabled = false;
     }
   });
 
-  button1.addEventListener("click", () => {
-    // Display the dimensions
-
-    // Set button values to 100
-    widthValue = 250;
-    heightValue = 250;
-    depthValue = 150;
-
-    // Update the form inputs with button values
-    widthInput.value = widthValue;
-    heightInput.value = heightValue;
-    depthInput.value = depthValue;
-  });
-  button2.addEventListener("click", () => {
-    // Display the dimensions
-
-    // Set button values to 100
-    widthValue = 325;
-    heightValue = 325;
-    depthValue = 125;
-
-    // Update the form inputs with button values
-    widthInput.value = widthValue;
-    heightInput.value = heightValue;
-    depthInput.value = depthValue;
-  });
-  button3.addEventListener("click", () => {
-    // Display the dimensions
-
-    // Set button values to 100
-    widthValue = 400;
-    heightValue = 400;
-    depthValue = 150;
-
-    // Update the form inputs with button values
-    widthInput.value = widthValue;
-    heightInput.value = heightValue;
-    depthInput.value = depthValue;
-  });
-
-  // Update the cube's dimensions and form inputs when the save button is clicked
   document.getElementById("saveButton").addEventListener("click", () => {
-    // Update the cube's dimensions based on the form inputs
-    widthValue = Number(widthInput.value);
-    heightValue = Number(heightInput.value);
-    depthValue = Number(depthInput.value);
-
-    // Update the form inputs with the cube dimensions
-    widthInput.value = widthValue;
-    heightInput.value = heightValue;
-    depthInput.value = depthValue;
-  });
-
-  // Set default values for the inputs
-  widthInput.value = "200";
-  heightInput.value = "200";
-  depthInput.value = "200";
-  colorInput.value = "#e7e7e7"; // Set the default color to black
-
-  // Update the cube's dimensions and color when the form is submitted
-  document.getElementById("saveButton").addEventListener("click", () => {
-    // Update the cube's dimensions based on the form inputs
     const widthValue = Number(widthInput.value);
     const heightValue = Number(heightInput.value);
     const depthValue = Number(depthInput.value);
-
-    // Update the cube with form input values
     updateCube(widthValue, heightValue, depthValue);
   });
 
-  document.getElementById("myButton").addEventListener("click", () => {
-    // Set button values to 100
-    const widthValue = 250;
-    const heightValue = 250;
-    const depthValue = 150;
+  // add size functionality end
 
-    // Update the cube with button values
-    updateCube(widthValue, heightValue, depthValue);
-  });
-  document.getElementById("myButton2").addEventListener("click", () => {
-    // Set button values to 325,325,125
-    const widthValue = 325;
-    const heightValue = 325;
-    const depthValue = 125;
-
-    // Update the cube with button values
-    updateCube(widthValue, heightValue, depthValue);
-  });
-  document.getElementById("myButton3").addEventListener("click", () => {
-    // Set button values to 325,325,125
-    const widthValue = 400;
-    const heightValue = 400;
-    const depthValue = 150;
-
-    // Update the cube with button values
-    updateCube(widthValue, heightValue, depthValue);
-  });
-
-  //Handle face buttons
-
-  const faceButtons = document.querySelectorAll(".face-button");
-  const colorPicker = document.getElementById("colorPicker");
-  const changeColorButton = document.getElementById("changeColorButton");
-
-  colorPicker.addEventListener("input", function () {
-    // Trigger the click event on the changeColorButton
-    changeColorButton.click();
-  });
-
-  changeColorButton.addEventListener("click", (event) => {
-    const newColor = colorPicker.value;
-
-    // Update the cube with the new material
-    colorsOfFace[activeFaceIndex] = newColor;
-
-    shouldRotateCube = false;
-    updateCube();
-
-    // Reset the rotation flag
-    shouldRotateCube = true;
-  });
+  //  face index functionality start
 
   let activeFaceIndex = 0;
-  let activeFace = "";
   const setActiveFaceIndex = (val) => {
     activeFaceIndex = val;
     return;
@@ -229,36 +136,146 @@ function initializeScene() {
     return;
   };
 
-  var selectedFace;
+  // face index functionality end
 
-  faceButtons.forEach((button) => {
-    button.addEventListener("click", (event) => {
-      const face = event.target.dataset.face;
-      selectedFace = face;
-      setActiveFaceIndex(event.target.dataset.index);
-      setActiveFace(event.target.dataset.face);
-      // activeFaceIndex = event.target.dataset.index;
+  // color functionality start
 
-      // Remove active class from all buttons
-      faceButtons.forEach((btn) => btn.classList.remove("active"));
+  let colorsOfFace = [];
 
-      // Add active class to the selected button
-      button.classList.add("active");
+  let shouldRotateCube = true;
 
-      // Rotate the cube to bring the selected face to the front
-      const rotation = getRotationByFace(face);
-      cube.rotation.x = rotation.x;
-      cube.rotation.y = rotation.y;
-    });
+  function updateCube() {
+    const newCubeGeometry = new THREE.BoxGeometry(
+      Number(widthInput.value),
+      Number(heightInput.value),
+      Number(depthInput.value)
+    );
 
-    // setActiveFaceIndex();
+    cube.geometry.dispose();
+    cube.geometry = newCubeGeometry;
+
+    let newMaterial = [
+      new THREE.MeshStandardMaterial({
+        color: boxValue.color[0],
+        map: boxValue.image[0],
+      }),
+      new THREE.MeshStandardMaterial({
+        color: boxValue.color[1],
+        map: boxValue.image[1],
+      }),
+      new THREE.MeshStandardMaterial({
+        color: boxValue.color[2],
+        map: boxValue.image[2],
+      }),
+      new THREE.MeshStandardMaterial({
+        color: boxValue.color[3],
+        map: boxValue.image[3],
+      }),
+      new THREE.MeshStandardMaterial({
+        color: boxValue.color[4],
+        map: boxValue.image[4],
+      }),
+      new THREE.MeshStandardMaterial({
+        color: boxValue.color[5],
+        map: boxValue.image[5],
+      }),
+    ];
+
+    cube.material = newMaterial;
+
+    if (shouldRotateCube) {
+      const startRotation = { x: 0, y: 0 };
+      const targetRotation = { x: Math.PI / 6, y: Math.PI / 4 };
+
+      const duration = 1000;
+      let startTime = null;
+
+      function animateInitialRotation(timestamp) {
+        if (!startTime) startTime = timestamp;
+
+        const progress = timestamp - startTime;
+        const t = Math.min(progress / duration, 1);
+
+        cube.rotation.x =
+          startRotation.x + (targetRotation.x - startRotation.x) * t;
+        cube.rotation.y =
+          startRotation.y + (targetRotation.y - startRotation.y) * t;
+
+        if (progress < duration) {
+          requestAnimationFrame(animateInitialRotation);
+        }
+      }
+
+      requestAnimationFrame(animateInitialRotation);
+    }
+  }
+
+  boxValue.color.map((value) => {
+    colorsOfFace.push(value);
   });
 
-  // Define rotation values for each face
+  const colorPicker = document.getElementById("colorPicker");
+  const changeColorButton = document.getElementById("changeColorButton");
+
+  colorInput.addEventListener("change", function () {
+    const colorValue = colorInput.value;
+
+    for (let i = 0; i < colorsOfFace.length; i++) {
+      colorsOfFace[i] = colorValue;
+      setBoxValue((boxValue.color[i] = colorValue));
+    }
+    shouldRotateCube = false;
+    updateCube();
+    shouldRotateCube = true;
+  });
+
+  colorPicker.addEventListener("input", function () {
+    changeColorButton.click();
+  });
+
+  changeColorButton.addEventListener("click", () => {
+    const newColor = colorPicker.value;
+    setBoxValue((boxValue.color[activeFaceIndex] = newColor));
+    colorsOfFace[activeFaceIndex] = newColor;
+    shouldRotateCube = false;
+    updateCube();
+    shouldRotateCube = true;
+  });
+
+  // color functionality end
+
+  //  face position functionality start
+
+  const faceButtons = document.querySelectorAll(".face-button");
+
+  var selectedFace;
+
+  function getTargetRotation(face) {
+    switch (face) {
+      case "front":
+        return { x: 0.1745, y: 0.3491 };
+      case "back":
+        return { x: 0.1745, y: Math.PI - 0.3491 };
+      case "top":
+        const rotationTY = THREE.MathUtils.degToRad(30);
+        const rotationTX = THREE.MathUtils.degToRad(-30);
+        return { x: Math.PI / 2 + rotationTX, y: 0 };
+      case "bottom":
+        const rotation = THREE.MathUtils.degToRad(30);
+        return { x: -Math.PI / 2 + rotation, y: 0 };
+      case "left":
+        return { x: 0.1745, y: (Math.PI / 9) * 3 + (Math.PI / 180) * 10 };
+      case "right":
+        return { x: 0.1745, y: (-Math.PI / 9) * 5 - (Math.PI / 180) * 10 };
+      default:
+        return { x: 0, y: 0 };
+    }
+  }
+
   function getRotationByFace(face) {
-    const duration = 1000; // Duration of the rotation animation in milliseconds
-    const startRotation = { x: cube.rotation.x, y: cube.rotation.y }; // Initial rotation values
-    const targetRotation = getTargetRotation(face); // Get the target rotation values based on the selected face
+    const duration = 1000;
+    const startRotation = { x: cube.rotation.x, y: cube.rotation.y };
+    const targetRotation = getTargetRotation(face);
 
     let startTime = null;
 
@@ -266,7 +283,7 @@ function initializeScene() {
       if (!startTime) startTime = timestamp;
 
       const progress = timestamp - startTime;
-      const t = Math.min(progress / duration, 1); // Calculate the progress of the animation as a value between 0 and 1
+      const t = Math.min(progress / duration, 1);
 
       cube.rotation.x =
         startRotation.x + (targetRotation.x - startRotation.x) * t;
@@ -282,177 +299,36 @@ function initializeScene() {
     return targetRotation;
   }
 
-  // Helper function to get the target rotation values based on the selected face
-  function getTargetRotation(face) {
-    switch (face) {
-      case "front":
-        return { x: 0.1745, y: 0.3491 }; // 20 degrees in radians (Math.PI / 9)
-      case "back":
-        return { x: 0.1745, y: Math.PI - 0.3491 }; // -20 degrees in radians (Math.PI - Math.PI / 9)
+  faceButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      const face = event.target.dataset.face;
+      selectedFace = face;
+      setActiveFaceIndex(event.target.dataset.index);
+      setActiveFace(event.target.dataset.face);
+      faceButtons.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+      const rotation = getRotationByFace(face);
+      cube.rotation.x = rotation.x;
+      cube.rotation.y = rotation.y;
+    });
+  });
 
-      case "top":
-        const rotationTY = THREE.MathUtils.degToRad(30);
-        const rotationTX = THREE.MathUtils.degToRad(-30);
-        return { x: Math.PI / 2 + rotationTX, y: 0 };
-
-      case "bottom":
-        const rotation = THREE.MathUtils.degToRad(30);
-        return { x: -Math.PI / 2 + rotation, y: 0 };
-
-      case "left":
-        return { x: 0.1745, y: (Math.PI / 9) * 3 + (Math.PI / 180) * 10 }; // 20 degrees + 10 degrees in radians
-      case "right":
-        return { x: 0.1745, y: (-Math.PI / 9) * 5 - (Math.PI / 180) * 10 }; // -20 degrees - 10 degrees in radians
-      default:
-        return { x: 0, y: 0 };
-    }
-  }
-
-  // Add event listeners to the alignment buttons
-  const alignLeftButton = document.getElementById("alignLeft");
-  const alignTopButton = document.getElementById("alignTop");
-  const alignCenterButton = document.getElementById("alignCenter");
-  const alignRightButton = document.getElementById("alignRight");
-  const alignBottomButton = document.getElementById("alignBottom");
-
-  alignLeftButton.addEventListener("click", handleAlignmentButtonClick);
-  alignTopButton.addEventListener("click", handleAlignmentButtonClick);
-  alignCenterButton.addEventListener("click", handleAlignmentButtonClick);
-  alignRightButton.addEventListener("click", handleAlignmentButtonClick);
-  alignBottomButton.addEventListener("click", handleAlignmentButtonClick);
-
-  function handleAlignmentButtonClick(event) {
-    const alignment = event.target.id; // Get the alignment from the clicked button's id
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-      const image = new Image();
-      image.src = e.target.result;
-
-      image.onload = function () {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-
-        // Get the desired canvas dimensions from the input fields
-        const inputHeight = parseInt(
-          document.getElementById("imageHeight").value
-        );
-        const inputWidth = parseInt(
-          document.getElementById("imageWidth").value
-        );
-
-        // Set the canvas dimensions to the desired size
-        canvas.width = inputWidth || 200; // Use the input value or default to 200 if empty
-        canvas.height = inputHeight || 200; // Use the input value or default to 200 if empty
-
-        // Calculate the position based on the alignment
-        let x, y;
-
-        switch (alignment) {
-          case "alignLeft":
-            x = 0;
-            y = (canvas.height - image.height) / 2;
-            break;
-          case "alignTop":
-            x = (canvas.width - image.width) / 2;
-            y = 0;
-            break;
-          case "alignCenter":
-            x = (canvas.width - image.width) / 2;
-            y = (canvas.height - image.height) / 2;
-            break;
-          case "alignRight":
-            x = canvas.width - image.width;
-            y = (canvas.height - image.height) / 2;
-            break;
-          case "alignBottom":
-            x = (canvas.width - image.width) / 2;
-            y = canvas.height - image.height;
-            break;
-          default:
-            x = (canvas.width - image.width) / 2;
-            y = (canvas.height - image.height) / 2;
-            break;
-        }
-
-        // Draw the active face color
-        context.fillStyle = "#e7e7e7";
-        context.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw the image onto the canvas at the desired position
-        context.drawImage(image, x, y, image.width, image.height);
-
-        // Convert the canvas back to a data URL
-        const resizedDataURL = canvas.toDataURL();
-
-        const texture = new THREE.Texture();
-        texture.image = new Image();
-        texture.image.onload = function () {
-          texture.needsUpdate = true;
-          texture.premultiplyAlpha = true;
-
-          texture.repeat.set(1, 1);
-
-          const material = new THREE.MeshLambertMaterial({
-            map: texture,
-            color: colorsOfFace[activeFaceIndex],
-          });
-          cube.material[activeFaceIndex] = material; // Set the material to the desired cube face
-        };
-
-        texture.image.src = resizedDataURL;
-      };
-    };
-  }
-
-  // Create a cube geometry with default values
-  const cubeGeometry = new THREE.BoxGeometry(
-    Number(widthInput.value),
-    Number(heightInput.value),
-    Number(depthInput.value)
-  );
-
-  // var loaderValue = new THREE.TextureLoader().load("https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg");
-
-  // Create an array of materials for each face
-  const faceMaterials = [
-    new THREE.MeshStandardMaterial({
-      color: 0xe7e7e7,
-    }), // Red material for the right face   0
-    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Green material for the left face   1
-    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Blue material for the top face  2
-    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Yellow material for the bottom face  3
-    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Magenta material for the front face  4
-    new THREE.MeshStandardMaterial({ color: 0xe7e7e7 }), // Cyan material for the bakc face   5
-  ];
-
-  // Create a cube mesh with different materials for each face
-  const cube = new THREE.Mesh(cubeGeometry, faceMaterials);
-
-  cube.castShadow = true; // Enable the cube to cast shadows
-  cube.receiveShadow = true; // Allow the cube's material to receive shadows
-  scene.add(cube); // Add cube to the scene
+  //  face position functionality end
 
   document.addEventListener("mousewheel", onMouseWheel, false);
   document.addEventListener("DOMMouseScroll", onMouseWheel, false); // For Firefox compatibility
 
   function onMouseWheel(event) {
     var delta = Math.max(-1, Math.min(1, event.wheelDelta || -event.detail));
-
-    // Calculate the new camera position
     var newCameraZ = camera.position.z - delta * 10; // Adjust the zoom speed if desired
-
     // Restrict the camera position between z = 700 and z = 50
     if (newCameraZ <= 800 && newCameraZ >= 300) {
       camera.position.z = newCameraZ;
     }
-
     // Make the camera always look at the scene's center
     camera.lookAt(scene.position);
   }
-  // Set camera position and add it to the scene
-  camera.position.z = 550; // Top right and back position
-
+  camera.position.z = 550;
   camera.lookAt(scene.position);
   scene.add(camera);
 
@@ -488,7 +364,6 @@ function initializeScene() {
   // Create a directional light from top right and back position
   const light = new THREE.DirectionalLight(0xffffff, 1.4);
   light.position.set(150, 300, 900);
-  // light.castShadow = true; // Enable shadow casting for the light
   light.shadow.mapSize.width = 2048; // Shadow map width for shadow quality
   light.shadow.mapSize.height = 2048; // Shadow map height for shadow quality
   scene.add(light);
@@ -508,63 +383,6 @@ function initializeScene() {
     renderer.render(scene, camera);
   }
   render();
-
-  // Define a boolean variable to track whether the cube rotation should occur
-  let shouldRotateCube = true;
-  function updateCube() {
-    const newCubeGeometry = new THREE.BoxGeometry(
-      Number(widthInput.value),
-      Number(heightInput.value),
-      Number(depthInput.value)
-    );
-
-    cube.geometry.dispose(); // Dispose of the old geometry
-    cube.geometry = newCubeGeometry;
-
-    let newMaterial = [
-      new THREE.MeshStandardMaterial({
-        color: colorsOfFace[0],
-      }), // Red material for the front face   0
-      new THREE.MeshStandardMaterial({ color: colorsOfFace[1] }), // Green material for the back face   1
-      new THREE.MeshStandardMaterial({ color: colorsOfFace[2] }), // Blue material for the top face  2
-      new THREE.MeshStandardMaterial({ color: colorsOfFace[3] }), // Yellow material for the bottom face  3
-      new THREE.MeshStandardMaterial({ color: colorsOfFace[4] }), // Magenta material for the right face  4
-      new THREE.MeshStandardMaterial({ color: colorsOfFace[5] }), // Cyan material for the left face   5
-    ];
-
-    // Update the material for all faces of the cube
-    cube.material = newMaterial;
-
-    if (shouldRotateCube) {
-      // Perform cube rotation logic here
-
-      ////this is the function to animate the generated cube by rotating it a bit, everytime it is generated
-      // Set the initial and target rotation values
-      const startRotation = { x: 0, y: 0 };
-      const targetRotation = { x: Math.PI / 6, y: Math.PI / 4 };
-
-      const duration = 1000; // Animation duration in milliseconds
-      let startTime = null;
-
-      function animateInitialRotation(timestamp) {
-        if (!startTime) startTime = timestamp;
-
-        const progress = timestamp - startTime;
-        const t = Math.min(progress / duration, 1); // Calculate the progress of the animation as a value between 0 and 1
-
-        cube.rotation.x =
-          startRotation.x + (targetRotation.x - startRotation.x) * t;
-        cube.rotation.y =
-          startRotation.y + (targetRotation.y - startRotation.y) * t;
-
-        if (progress < duration) {
-          requestAnimationFrame(animateInitialRotation);
-        }
-      }
-
-      requestAnimationFrame(animateInitialRotation);
-    }
-  }
 
   // Rotate the cube on mouse click and drag
   let isDragging = false;
@@ -623,16 +441,34 @@ function initializeScene() {
   const imageInput = document.getElementById("imageInput");
   const image_cancel = document.querySelectorAll(".image_cancel");
 
-  var faceMaterialsDefualt = [
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
-    new THREE.MeshBasicMaterial({ color: 0xe7e7e7 }),
-  ];
-
   save_design.addEventListener("click", function () {
+    var faceMaterialsDefault = [
+      new THREE.MeshBasicMaterial({
+        color: boxValue.color[0],
+        map: boxValue.image[0],
+      }),
+      new THREE.MeshBasicMaterial({
+        color: boxValue.color[1],
+        map: boxValue.image[1],
+      }),
+      new THREE.MeshBasicMaterial({
+        color: boxValue.color[2],
+        map: boxValue.image[2],
+      }),
+      new THREE.MeshBasicMaterial({
+        color: boxValue.color[3],
+        map: boxValue.image[3],
+      }),
+      new THREE.MeshBasicMaterial({
+        color: boxValue.color[4],
+        map: boxValue.image[4],
+      }),
+      new THREE.MeshBasicMaterial({
+        color: boxValue.color[5],
+        map: boxValue.image[5],
+      }),
+    ];
+
     const file = imageInput.files[0];
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -645,50 +481,76 @@ function initializeScene() {
 
         switch (selectedFace) {
           case "top":
-            faceMaterialsDefualt[2].map = texture;
-            faceMaterialsDefualt[2].needsUpdate = true;
-            cube.material = faceMaterialsDefualt;
+            faceMaterialsDefault[2].map = texture;
+            faceMaterialsDefault[2].needsUpdate = true;
+            faceMaterialsDefault[2].color.set("white");
+            setBoxValue((boxValue.image[2] = texture));
+            setBoxValue((boxValue.color[2] = "white"));
+            cube.material = faceMaterialsDefault;
             break;
 
           case "bottom":
-            faceMaterialsDefualt[3].map = texture;
-            faceMaterialsDefualt[3].needsUpdate = true;
-            cube.material = faceMaterialsDefualt;
+            faceMaterialsDefault[3].map = texture;
+            faceMaterialsDefault[3].needsUpdate = true;
+            faceMaterialsDefault[3].color.set("white");
+            setBoxValue((boxValue.image[3] = texture));
+            setBoxValue((boxValue.color[3] = "white"));
+
+            cube.material = faceMaterialsDefault;
             break;
 
           case "right":
-            faceMaterialsDefualt[0].map = texture;
-            faceMaterialsDefualt[0].needsUpdate = true;
-            cube.material = faceMaterialsDefualt;
+            faceMaterialsDefault[0].map = texture;
+            faceMaterialsDefault[0].needsUpdate = true;
+            faceMaterialsDefault[0].color.set("white");
+            setBoxValue((boxValue.image[0] = texture));
+            setBoxValue((boxValue.color[0] = "white"));
+
+            cube.material = faceMaterialsDefault;
             break;
 
           case "left":
-            faceMaterialsDefualt[1].map = texture;
-            faceMaterialsDefualt[1].needsUpdate = true;
-            cube.material = faceMaterialsDefualt;
+            faceMaterialsDefault[1].map = texture;
+            faceMaterialsDefault[1].needsUpdate = true;
+            faceMaterialsDefault[1].color.set("white");
+            setBoxValue((boxValue.image[1] = texture));
+            setBoxValue((boxValue.color[1] = "white"));
+
+            cube.material = faceMaterialsDefault;
             break;
 
           case "front":
-            faceMaterialsDefualt[4].map = texture;
-            faceMaterialsDefualt[4].needsUpdate = true;
-            cube.material = faceMaterialsDefualt;
+            faceMaterialsDefault[4].map = texture;
+            faceMaterialsDefault[4].needsUpdate = true;
+            faceMaterialsDefault[4].color.set("white");
+            setBoxValue((boxValue.image[4] = texture));
+            setBoxValue((boxValue.color[4] = "white"));
+
+            cube.material = faceMaterialsDefault;
             break;
 
           case "back":
-            faceMaterialsDefualt[5].map = texture;
-            faceMaterialsDefualt[5].needsUpdate = true;
-            cube.material = faceMaterialsDefualt;
+            faceMaterialsDefault[5].map = texture;
+            faceMaterialsDefault[5].needsUpdate = true;
+            faceMaterialsDefault[5].color.set("white");
+            setBoxValue((boxValue.image[5] = texture));
+            setBoxValue((boxValue.color[5] = "white"));
+
+            cube.material = faceMaterialsDefault;
             break;
 
           default:
-            faceMaterialsDefualt.map((value) => {
+            faceMaterialsDefault.map((value, i) => {
               value.map = texture;
               value.needsUpdate = true;
+              faceMaterialsDefault[i].color.set("white");
+              setBoxValue((boxValue.image[i] = texture));
+              setBoxValue((boxValue.color[i] = "white"));
             });
-            cube.material = faceMaterialsDefualt;
+            cube.material = faceMaterialsDefault;
             break;
         }
-        cube.material = faceMaterialsDefualt;
+        cube.material = faceMaterialsDefault;
       };
     };
     reader.readAsDataURL(file);

@@ -24,48 +24,26 @@
     <div class="productDetailContainer container">
       <div class="row section1">
         <div class="row" style="margin-top: 1rem" id="cube-form">
-          <select class="form-select common-select2">
-            <option>
-              <button type="button" class="btn btn-primary">Select size</button>
-            </option>
-            <option>
-              <button type="button" class="btn btn-primary">
-                2.5 x 2.5 x 1.5
-              </button>
-            </option>
-            <option>
-              <button type="button" class="btn btn-primary">
-                3.25 x 3.25 x 1.25
-              </button>
-            </option>
-            <option>
-              <button type="button" class="btn btn-primary">4 x 4 x 1.5</button>
-            </option>
-            <option>
-              <button type="button" class="btn btn-primary">
-                Choose custom
-              </button>
-            </option>
+          <select class="common-select2" id="size-form">
+            <option value="200,200,200">Select size</option>
+            <option value="300,240,100">2.5 x 2.5 x 1.5</option>
+            <option value="300,50,100">3.25 x 3.25 x 1.25</option>
+            <option value="100,200,100">4 x 4 x 1.5</option>
+            <option value="custom">Choose custom</option>
           </select>
-          <button id="myButton" class="button-hide">2.5 x 2.5 x 1.5</button>
-          <button id="myButton2" class="button-hide">3.25 x 3.25 x 1.25</button>
-          <button id="myButton3" class="button-hide">4 x 4 x 1.5</button>
 
-          <button id="custom-choice" class="button-hide">
-            Choose custom style
-          </button>
           <form action="#" method="POST" onsubmit="return false;">
             <!-- Dimension inputs -->
-            <label for="width">Length:</label>
+            <label for="width">Width:</label>
             <input type="number" name="width" id="width" />
-            <label for="height">Width:</label>
+            <label for="height">Height:</label>
             <input type="number" name="height" id="height" />
             <label for="depth">Depth:</label>
             <input type="number" name="depth" id="depth" />
             <!-- Add inputs for height and depth -->
             <br />
             <!-- Color selection -->
-            <label for="color">Color:</label>
+            <label for="color">Custom Size:</label>
 
             <button type="button" id="saveButton">Save</button>
           </form>
@@ -125,10 +103,6 @@
             <input type="color" name="color" id="color" /><span>
               <p>Change Box color</p>
             </span>
-            <button id="updateColorButton" class="button-hide">
-              Update Cube
-            </button>
-
             <input type="color" id="colorPicker" value="#ffffff" /><span>
               <p>Change Face color</p>
             </span>
